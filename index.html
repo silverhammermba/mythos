@@ -142,30 +142,24 @@
 	<script>
 'use strict';
 
-Object.defineProperties(Array.prototype, {
-	// count array elements with a certain property
-    count: {
-        value: function(fun) {
-			var c = 0;
-			for (var i = 0; i < this.length; ++i)
-				if (fun(this[i])) ++c;
-			return c;
-		}
-	},
-	// shuffle array in place (thanks StackOverflow!)
-	shuffle: {
-		value: function() {
-			for (var i = this.length - 1; i > 0; i--) {
-				var j = Math.floor(Math.random() * (i + 1));
-				var temp = this[i];
-				this[i] = this[j];
-				this[j] = temp;
-			}
-			return this;
-		}
-	}
-});
+// count array elements with a certain property
+Array.prototype.count = function(fun) {
+	var c = 0;
+	for (var i = 0; i < this.length; ++i)
+		if (fun(this[i])) ++c;
+	return c;
+};
 
+// shuffle array in place (thanks StackOverflow!)
+Array.prototype.shuffle = function() {
+	for (var i = this.length - 1; i > 0; i--) {
+		var j = Math.floor(Math.random() * (i + 1));
+		var temp = this[i];
+		this[i] = this[j];
+		this[j] = temp;
+	}
+	return this;
+};
 
 function tryShowBuild() {
 	var sao = document.getElementById("ao").value !== "";
@@ -223,8 +217,16 @@ function addNormal(used, all, counts) {
 	return used;
 }
 
+// add a starting rumor to deck from used
+function startingRumor(deck, used) {
+	// find rumors not already in the deck
+	var rumors = used.filter(function(card) { return card.match(/^blue/) && deck.indexOf(card) < 0; }).shuffle();
+	// add one
+	deck.push(rumors.pop());
+}
+
 // build a staged deck
-function stagedBuild(used, counts) {
+function stagedBuild(used, counts, strtrum) {
 	var easy = used.filter(function(card) { return card.match(/-E/); });
 	var normal = used.filter(function(card) { return card.match(/-N/); });
 	var hard = used.filter(function(card) { return card.match(/-H/); });
@@ -264,11 +266,13 @@ function stagedBuild(used, counts) {
 	for (var j = 0; j < counts[2]; ++j) stage.push(blue.pop());
 	deck = deck.concat(stage.shuffle());
 
+	if (strtrum) deck.push(blue.pop());
+
 	return deck;
 }
 
 // build a deck with custom difficulty distribution
-function customBuild(used, counts) {
+function customBuild(used, counts, strtrum) {
 	// get sliders and convert to proportions
 	var easy = parseInt(document.getElementById("easyp").value, 10);
 	var normal = parseInt(document.getElementById("normalp").value, 10);
@@ -297,6 +301,8 @@ function customBuild(used, counts) {
 		colors[names[i]] = [];
 
 		total = counts[i] + counts[i + 3] + counts[i + 6];
+		// if starting rumor, ensure we have an extra blue
+		if (strtrum && i == 2) ++total;
 		var nume = Math.ceil(total * easy);
 		var numn = Math.ceil(total * normal);
 		var numh = Math.ceil(total * hard);
@@ -315,7 +321,9 @@ function customBuild(used, counts) {
 	if (random > 0) alert("Not enough Mythos cards of that difficulty. Added " + random + " random card" + (random > 1 ? 's' : '') + ". Buy some expansions!");
 
 	// put them all back together and then build normally
-	return randBuild(colors['gren'].concat(colors['yelw']).concat(colors['blue']), counts);
+	var deck = randBuild(colors['gren'].concat(colors['yelw']).concat(colors['blue']), counts);
+	if (strtrum) startingRumor(deck, colors['blue']);
+	return deck;
 }
 
 var deck;
@@ -333,34 +341,40 @@ function buildDeck() {
 	var used = cards.filter(function(card) { return card.match(expansions); });
 
 	var counts = ancient_ones[form['ao'].value];
+	var strtrum = form['startingrumor'].checked;
 
 	switch (form['method'].value) {
 		case 'random':
 			deck = randBuild(used, counts);
+			if (strtrum) startingRumor(deck, used);
 			break;
 		case 'nohard':
 			used = used.filter(function(card) { return card.match(/-[EN]/); });
 			deck = randBuild(used, counts);
+			if (strtrum) startingRumor(deck, used);
 			break;
 		case 'noeasy':
 			used = used.filter(function(card) { return card.match(/-[NH]/); });
 			deck = randBuild(used, counts);
+			if (strtrum) startingRumor(deck, used);
 			break;
 		case 'easy':
 			var easy = used.filter(function(card) { return card.match(/-E/); });
 			// make sure there are enough cards
 			deck = randBuild(addNormal(easy, used, counts), counts);
+			if (strtrum) startingRumor(deck, easy);
 			break;
 		case 'hard':
 			var hard = used.filter(function(card) { return card.match(/-H/); });
 			// make sure there are enough cards
 			deck = randBuild(addNormal(hard, used, counts), counts);
+			if (strtrum) startingRumor(deck, hard);
 			break;
 		case 'staged':
-			deck = stagedBuild(used, counts);
+			deck = stagedBuild(used, counts, strtrum);
 			break;
 		case 'custom':
-			deck = customBuild(used, counts);
+			deck = customBuild(used, counts, strtrum);
 			break;
 	}
 
@@ -372,6 +386,11 @@ function buildDeck() {
 	document.getElementById('play').style.display = 'block';
 
 	// TODO verify deck with counts?
+
+	if (strtrum) {
+		document.getElementById('c2').innerHTML = counts[2] + 1;
+		draw();
+	}
 }
 
 function draw() {
