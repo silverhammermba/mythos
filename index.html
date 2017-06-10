@@ -134,6 +134,7 @@
 				<tr><th>Stage II: </th><td id="c3" class="green">0</td><td id="c4" class="yellow">0</td><td id="c5" class="blue">0</td></tr>
 				<tr><th>Stage III:</th><td id="c6" class="green">0</td><td id="c7" class="yellow">0</td><td id="c8" class="blue">0</td></tr>
 			</table>
+			<p id="desc"></p>
 			<button type="button" id="draw" onclick="draw()">Draw</button><br>
 			<div id="cards">
 			</div>
@@ -272,7 +273,7 @@ function stagedBuild(used, counts, strtrum) {
 }
 
 // build a deck with custom difficulty distribution
-function customBuild(used, counts, strtrum) {
+function customBuild(used, counts, strtrum, desc) {
 	// get sliders and convert to proportions
 	var easy = parseInt(document.getElementById("easyp").value, 10);
 	var normal = parseInt(document.getElementById("normalp").value, 10);
@@ -285,6 +286,8 @@ function customBuild(used, counts, strtrum) {
 		normal /= total;
 		hard /= total;
 	}
+
+	desc.innerHTML = "Custom: " + Math.floor(easy * 100) + "% easy, " + Math.floor(normal * 100) + "% normal, " + Math.floor(hard * 100) + "% hard.";
 
 	// build mini green/yellow/blue decks with those proportions
 	var colors = {};
@@ -328,8 +331,17 @@ function customBuild(used, counts, strtrum) {
 
 var deck;
 
+// warning to show when leaving after deck has been built
+function leaveWarn(e) {
+	var msg = 'Are you sure you want to leave this page? Your Mythos deck will be lost.';
+
+	(e || window.event).returnValue = msg;
+	return msg;
+}
+
 function buildDeck() {
 	var form = document.forms[0];
+	var desc = document.getElementById('desc');
 
 	// build regexp for selecting expansion cards
 	var expansions = 'B';
@@ -347,46 +359,57 @@ function buildDeck() {
 		case 'random':
 			deck = randBuild(used, counts);
 			if (strtrum) startingRumor(deck, used);
+			desc.innerHTML = 'Normal setup.';
 			break;
 		case 'nohard':
 			used = used.filter(function(card) { return card.match(/-[EN]/); });
 			deck = randBuild(used, counts);
 			if (strtrum) startingRumor(deck, used);
+			desc.innerHTML = 'No hard cards.';
 			break;
 		case 'noeasy':
 			used = used.filter(function(card) { return card.match(/-[NH]/); });
 			deck = randBuild(used, counts);
 			if (strtrum) startingRumor(deck, used);
+			desc.innerHTML = 'No easy cards.';
 			break;
 		case 'easy':
 			var easy = used.filter(function(card) { return card.match(/-E/); });
 			// make sure there are enough cards
 			deck = randBuild(addNormal(easy, used, counts), counts);
 			if (strtrum) startingRumor(deck, easy);
+			desc.innerHTML = 'All easy cards.';
 			break;
 		case 'hard':
 			var hard = used.filter(function(card) { return card.match(/-H/); });
 			// make sure there are enough cards
 			deck = randBuild(addNormal(hard, used, counts), counts);
 			if (strtrum) startingRumor(deck, hard);
+			desc.innerHTML = 'All hard cards.';
 			break;
 		case 'staged':
 			deck = stagedBuild(used, counts, strtrum);
+			desc.innerHTML = 'Staged deck.';
 			break;
 		case 'custom':
-			deck = customBuild(used, counts, strtrum);
+			deck = customBuild(used, counts, strtrum, desc);
 			break;
 	}
 
+	// update the remaining counts
 	for (var i = 0; i < 9; ++i) {
 		document.getElementById('c' + i).innerHTML = counts[i];
 	}
 
+	// remove form, show the card area
 	form.parentNode.removeChild(form);
 	document.getElementById('play').style.display = 'block';
+	// warn when leaving the page
+	window.addEventListener("beforeunload", leaveWarn);
 
 	// TODO verify deck with counts?
 
+	// handle starting rumor
 	if (strtrum) {
 		document.getElementById('c2').innerHTML = counts[2] + 1;
 		draw();
@@ -394,9 +417,9 @@ function buildDeck() {
 }
 
 function draw() {
-	var div = document.getElementById('cards');
-
 	if (deck.length === 0) return;
+
+	var div = document.getElementById('cards');
 
 	var name = deck.pop();
 
@@ -430,7 +453,11 @@ function draw() {
 
 	div.insertBefore(card, div.firstChild);
 
-	if (deck.length === 0) document.getElementById('draw').disabled = "disabled";
+	if (deck.length === 0) {
+		document.getElementById('draw').disabled = "disabled";
+		// safe to navigate away
+		window.removeEventListener("beforeunload", leaveWarn);
+	}
 }
 
 var cards = ['blue-00-HR4', 'blue-01-HR2', 'blue-02-NR0', 'blue-03-NR4',
@@ -487,13 +514,17 @@ var ancient_ones = {
 	'Rise of the Elder Things': [2, 2, 1, 3, 3, 1, 4, 4, 0]
 };
 
-var select = document.getElementById("ao");
-var names = Object.keys(ancient_ones).sort();
-for (var i = 0; i < names.length; ++i) {
-	var opt = document.createElement('option');
-    opt.value = names[i];
-    opt.innerHTML = names[i];
-    select.appendChild(opt);
+window.onload = function() {
+	var select = document.getElementById("ao");
+	var names = Object.keys(ancient_ones).sort();
+	for (var i = 0; i < names.length; ++i) {
+		var opt = document.createElement('option');
+		opt.value = names[i];
+		opt.innerHTML = names[i];
+		select.appendChild(opt);
+	}
+
+	methodChange(document.getElementById("method"));
 }
 	</script>
 </html>
