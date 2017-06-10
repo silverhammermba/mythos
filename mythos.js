@@ -291,10 +291,18 @@ function buildDeck() {
 	}
 }
 
+// return how many eldritch tokens this card starts with (-1 for reckoning but no tokens)
 function tokenCount(str) {
-	var match = str.match(/(\d|-).jpg/);
+	var match = str.match(/(\d|-)c?.jpg/);
 	if (match) return match[1] === '-' ? -1 : parseInt(match[1], 10);
 	return null;
+}
+
+// indicate if this card accumulates clues
+function hasClues(str) {
+	var match = str.match(/c.jpg/);
+	if (match) return true;
+	return false;
 }
 
 function draw() {
@@ -333,15 +341,24 @@ function draw() {
 
 	var count = tokenCount(card.style.backgroundImage);
 	if (count !== null) {
-		var html = '<a class="close" href="#" onclick="hide(this)">✖</a>';
+		var html = '';
+		if (hasClues(card.style.backgroundImage)) {
+			html +=
+				'<div class="clue token">'
+					+ '<a class="arrow left" href="#" onclick="loseToken(this)">◀</a>'
+					+ '<p>0</p>'
+					+ '<a class="arrow right" href="#" onclick="addToken(this)">▶</a>'
+				+ '</div>';
+		}
 		if (count >= 0) {
-			html =
-				'<div class="token">'
+			html +=
+				'<div class="eldritch token">'
 					+ '<a class="arrow left" href="#" onclick="loseToken(this)">◀</a>'
 					+ '<p>' + count + '</p>'
 					+ '<a class="arrow right" href="#" onclick="addToken(this)">▶</a>'
-				+ '</div>' + html;
+				+ '</div>';
 		}
+		html += '<a class="close" href="#" onclick="hide(this)">✖</a>';
 		card.innerHTML = html;
 	}
 
@@ -354,13 +371,13 @@ function draw() {
 	}
 }
 
-var cards = ['blue-00-HR4', 'blue-01-HR2', 'blue-02-NR-', 'blue-03-NR4',
+var cards = ['blue-00-HR4c', 'blue-01-HR2', 'blue-02-NR-', 'blue-03-NR4',
 'blue-04-ER3', 'blue-05-NM3', 'blue-06-EM5', 'blue-07-HM-', 'blue-08-HM3',
 'blue-09-NM-', 'blue-10-NM4', 'blue-11-HL3', 'blue-12-NL-', 'blue-13-EB3',
 'blue-14-HB-', 'blue-15-HB8', 'blue-16-HB3', 'blue-17-NB-', 'blue-18-HB0',
-'blue-19-NB4', 'blue-20-NB-', 'blue-21-EB-', 'blue-22-NB4', 'blue-23-EB4',
-'blue-24-EB4', 'blue-25-ED-', 'blue-26-ND3', 'blue-27-ND3', 'blue-28-ND3',
-'blue-29-HD-', 'blue-30-HD3', 'blue-31-NC-', 'blue-32-HC2', 'blue-33-HC5',
+'blue-19-NB4', 'blue-20-NB-c', 'blue-21-EB-', 'blue-22-NB4', 'blue-23-EB4',
+'blue-24-EB4', 'blue-25-ED-', 'blue-26-ND3', 'blue-27-ND3', 'blue-28-ND3c',
+'blue-29-HD-', 'blue-30-HD3', 'blue-31-NC-c', 'blue-32-HC2', 'blue-33-HC5',
 'blue-34-NC3', 'blue-35-NC1', 'blue-36-HP-', 'blue-37-EP-', 'blue-38-NP4',
 'blue-39-EP3', 'blue-40-HP0', 'blue-41-NP4', 'blue-42-EC4', 'gren-00-ER',
 'gren-01-ER', 'gren-02-NR-', 'gren-03-NR-', 'gren-04-NR', 'gren-05-HR-',
