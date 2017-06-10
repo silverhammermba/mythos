@@ -2,6 +2,10 @@
 	display: none;
 }
 
+#srcb {
+	display: inline-block;
+}
+
 #header {
 	display: flex;
 }
