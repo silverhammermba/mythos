@@ -2,6 +2,21 @@
 	display: none;
 }
 
+#header {
+	display: flex;
+}
+#remdesc {
+	padding-right: 20px;
+}
+#but {
+	flex: 1;
+}
+#but button {
+	width: 100%;
+	height: 100%;
+	font-size: 50px;
+}
+
 table th {
 	text-align: right;
 }
@@ -26,6 +41,7 @@ td.blue {
 	width: 275px;
 	height: 435px;
 	background-size: 100% 100%;
+	border-radius: 10px;
 }
 
 .card .token {
@@ -86,5 +102,5 @@ td.blue {
 	color: white;
 	text-decoration: none;
 	padding: 2px 2px 10px 10px;
-	border-radius: 0 0 0 100%;
+	border-radius: 0 10px 0 80%;
 }

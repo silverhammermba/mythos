@@ -53,7 +53,6 @@
 				<option value="custom">Custom distribution</option>
 			</select>
 
-			<!-- TODO implement -->
 			<label><input type="checkbox" id="strm" name="startingrumor" value="starting"> Starting rumor?</label>
 
 			<p id="random" class="desc">
@@ -106,15 +105,20 @@
 		</form>
 
 		<div id="play">
-			<table id="remaining">
-				<caption>Remaining</caption>
-				<tr><th>Stage I:  </th><td id="c0" class="green">0</td><td id="c1" class="yellow">0</td><td id="c2" class="blue">0</td></tr>
-				<tr><th>Stage II: </th><td id="c3" class="green">0</td><td id="c4" class="yellow">0</td><td id="c5" class="blue">0</td></tr>
-				<tr><th>Stage III:</th><td id="c6" class="green">0</td><td id="c7" class="yellow">0</td><td id="c8" class="blue">0</td></tr>
-			</table>
-			<p id="desc"></p>
-			<button type="button" id="draw" onclick="draw()">Draw</button><br>
-			<div id="cards"></div>
+			<section id="header">
+				<div id="remdesc">
+				<table id="remaining">
+					<caption>Remaining</caption>
+					<tr><th>Stage I:  </th><td id="c0" class="green">0</td><td id="c1" class="yellow">0</td><td id="c2" class="blue">0</td></tr>
+					<tr><th>Stage II: </th><td id="c3" class="green">0</td><td id="c4" class="yellow">0</td><td id="c5" class="blue">0</td></tr>
+					<tr><th>Stage III:</th><td id="c6" class="green">0</td><td id="c7" class="yellow">0</td><td id="c8" class="blue">0</td></tr>
+				</table>
+				<p id="desc"></p>
+				</div><div id="but">
+				<button type="button" id="draw" onclick="draw()">DRAW</button><br>
+				<div>
+			</section>
+			<section id="cards"></section>
 		</div>
 	</body>
 	<script src="mythos.js"></script>
