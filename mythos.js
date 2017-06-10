@@ -345,20 +345,20 @@ function draw() {
 		if (hasClues(card.style.backgroundImage)) {
 			html +=
 				'<div class="clue token">'
-					+ '<a class="arrow left" href="#" onclick="loseToken(this)">◀</a>'
+					+ '<a class="arrow left" href="#" onclick="loseToken(this); return false">◀</a>'
 					+ '<p>0</p>'
-					+ '<a class="arrow right" href="#" onclick="addToken(this)">▶</a>'
+					+ '<a class="arrow right" href="#" onclick="addToken(this); return false">▶</a>'
 				+ '</div>';
 		}
 		if (count >= 0) {
 			html +=
 				'<div class="eldritch token">'
-					+ '<a class="arrow left" href="#" onclick="loseToken(this)">◀</a>'
+					+ '<a class="arrow left" href="#" onclick="loseToken(this); return false">◀</a>'
 					+ '<p>' + count + '</p>'
-					+ '<a class="arrow right" href="#" onclick="addToken(this)">▶</a>'
+					+ '<a class="arrow right" href="#" onclick="addToken(this); return false">▶</a>'
 				+ '</div>';
 		}
-		html += '<a class="close" href="#" onclick="hide(this)">✖</a>';
+		html += '<a class="close" href="#" onclick="hide(this); return false">✖</a>';
 		card.innerHTML = html;
 	}
 
