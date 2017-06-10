@@ -1,0 +1,82 @@
+.desc, #build, #play {
+	display: none;
+}
+
+table th {
+	text-align: right;
+}
+table td {
+	color: white;
+	font-weight: bold;
+	padding: 0 5px;
+}
+td.green {
+	background: #10783d;
+}
+td.yellow {
+	background: #b58b1d;
+}
+td.blue {
+	background: #3372b5;
+}
+
+.card {
+	display: inline-block;
+	position: relative;
+	width: 275px;
+	height: 435px;
+	background-size: 100% 100%;
+}
+
+.card .token {
+	position: absolute;
+	top: 0;
+	right: 40px;
+	width: 50px;
+	height: 50px;
+	background-image: url('token.png');
+	background-size: 100% 100%;
+}
+
+.card .token p {
+	color: white;
+	text-align: center;
+	margin-top: 8px;
+	font: bold 30px serif;
+	text-shadow:
+		0 0 1px black,
+		0 0 1px black,
+		0 0 2px black,
+		0 0 3px black;
+}
+
+.token .arrow {
+	position: absolute;
+	text-decoration: none;
+	top: 15px;
+	color: white;
+	text-shadow:
+		0 0 1px black,
+		0 0 1px black,
+		0 0 2px black,
+		0 0 3px black;
+}
+
+.token .arrow.left {
+	right: 55px;
+}
+
+.token .arrow.right {
+	left: 55px;
+}
+
+.card .close {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.7);
+	color: white;
+	text-decoration: none;
+	padding: 2px 2px 10px 10px;
+	border-radius: 0 0 0 100%;
+}
