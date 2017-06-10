@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name=viewport content="width=device-width, initial-scale=1">
+
+		<title>Eldritch Horror Mythos Companion</title>
+
+<style>
+.desc, #build {
+	display: none;
+}
+
+		table th {
+			text-align: right;
+		}
+		table td {
+			color: white;
+			font-weight: bold;
+			padding: 0 5px;
+		}
+		td.green {
+			background: #10783d;
+		}
+		td.yellow {
+			background: #b58b1d;
+		}
+		td.blue {
+			background: #3372b5;
+		}
+</style>
+	</head>
+	<body>
+		<form>
+			<fieldset>
+				<legend>Expansions</legend>
+				<div>
+					<input type="checkbox" id="fl" name="expansion" value="L">
+					<label for="fl">Forsaken Lore</label>
+				</div>
+				<div>
+					<input type="checkbox" id="mom" name="expansion" value="M">
+					<label for="mom">Mountains of Madness</label>
+				</div>
+				<div>
+					<input type="checkbox" id="sr" name="expansion" value="R">
+					<label for="sr">Strange Remnants</label>
+				</div>
+				<div>
+					<input type="checkbox" id="utp" name="expansion" value="P">
+					<label for="utp">Under the Pyramids</label>
+				</div>
+				<div>
+					<input type="checkbox" id="soc" name="expansion" value="C">
+					<label for="soc">Signs of Carcosa</label>
+				</div>
+				<div>
+					<input type="checkbox" id="td" name="expansion" value="D">
+					<label for="td">The Dreamlands</label>
+				</div>
+			</fieldset>
+
+			<select id="ao" onchange="tryShowBuild()">
+				<option style="display:none" selected="selected" value="">Ancient One</option>
+			</select>
+
+			<select id="method" onchange="methodChange(this)">
+				<option style="display:none" selected="selected" value="">Deck building method</option>
+				<option value="random">Normal</option>
+				<option value="nohard">Hard removed</option>
+				<option value="noeasy">Easy removed</option>
+				<option value="easy">Easy only</option>
+				<option value="hard">Hard only</option>
+				<option value="staged">Staged</option>
+				<option value="custom">Custom distribution</option>
+			</select>
+
+			<!-- TODO implement -->
+			<label><input type="checkbox" id="strm" name="startingrumor" value="starting"> Starting rumor?</label>
+
+			<p id="random" class="desc">
+				The normal Mythos setup. Expect the unexpected.
+			</p>
+
+			<p id="nohard" class="desc">
+				All hard Mythos cards removed. Good for beginners.
+			</p>
+
+			<p id="noeasy" class="desc">
+				All easy Mythos cards removed. Good for experts.
+			</p>
+
+			<p id="easy" class="desc">
+				Only easy Mythos cards are used. For a more relaxing apocalypse.
+			</p>
+
+			<p id="hard" class="desc">
+				Are you sure you wanh̷̗̗̳̤̭̫'̺͇̳ng̠̟̻̼͡l̴̺̞̣̣͍ͅu̞̥i̗ ͚m̥̗̫͝ͅg̴l͎̕w̦̮'̟n҉̖̺̼̦̬a̗̕f͟h̢͔ C̳̯̺͙̞ͅt͉h̙̦͚̼͔͡u̱͈̙̩̜l̪̲̙̭̰ͅh͇̼̪̹̱̝͡u ̙̥͕̗̜̓̿̌̔̾̓̆͞R̢̛̹͎͈̙̳̿͑̾͡'̈́ͦͧͫͨͨ̈͏̠l͇̩͕͎͌͆͊ͥ̒͞ẙ̉̑̔͞҉̠͇̣̖̹̝̺ͅe̛͌̎̐̆̏͂̈͆͏̨̣̱͙͎h̷̦̲͎̥̜̻̹͂ͯ̆̌͗͘͢ ̜͈͒̏͂̉ͥ̄̄̅̚w̛̪͙͍͚̰̫̹̮͓ͤ̂ͦ͛̈̏g̶̳͎ͩ͑̅a̢̱̰̫̱̲̬̝̘̺͑ͫ́̊ͮ͛̔͐̐́ȟ̻̟̻͂̅͗̄́̉̉́͟'̷͓̰̘̟̫̜̲ͭ̅ṋ̡͓̘̰̙͒̄ͭ͒͑ͧa͉͈͈̜̖̘̅ͣͩͤ̍͛̃̇́̚g̝̬̺͉̫̲̻͆͒ḷ̣̙̘̓ͥ̽ͦ͂ ̨̛̼̣̭̫͔̞ͫ̑́ͅf̶̛̝̞͉̦̤͚̞͔ͬ͒ͪͅh̸̞͍̗̣͉͔̔̒̄̏̄̒̓̽̚t̼̱̪̥̙ͦ̏͗ͩͮ̔̉a̴̯͇͚̿͛̆̃̋g͋̉̀̈̇̚͏͏̠̤̮̖͚̜ͅn̷̴̰̱ͮͨͣͧͅ.̯͇̲̦͖ͭ̍ͥͨͅ
+			</p>
+
+			<div id="staged" class="desc">
+				<p>Mythos cards increase in difficulty with each stage.</p>
+				<div>
+					<input type="checkbox" id="rudf" name="rumordifficulty" value="harder">
+					<label for="rudf">Harder rumors?</label>
+				</div>
+			</div>
+
+			<div id="custom" class="desc">
+				<fieldset>
+					<legend>Difficulty distribution (per-color)</legend>
+					<div>
+						<input type="range" min="0" max="100" name="easy" id="easyp">
+						<label for="easy">Easy</label>
+					</div>
+					<div>
+						<input type="range" min="0" max="100" name="normal" id="normalp">
+						<label for="normal">Normal</label>
+					</div>
+					<div>
+						<input type="range" min="0" max="100" name="hard" id="hardp">
+						<label for="hard">Hard</label>
+					</div>
+				</fieldset>
+			</div>
+
+			<button type="button" id="build" onclick="buildDeck()">Build</button>
+		</form>
+
+		<table>
+			<caption>Remaining</caption>
+			<tr><th>Stage I:  </th><td id="c0" class="green">0</td><td id="c1" class="yellow">0</td><td id="c2" class="blue">0</td></tr>
+			<tr><th>Stage II: </th><td id="c3" class="green">0</td><td id="c4" class="yellow">0</td><td id="c5" class="blue">0</td></tr>
+			<tr><th>Stage III:</th><td id="c6" class="green">0</td><td id="c7" class="yellow">0</td><td id="c8" class="blue">0</td></tr>
+		</table>
+
+		<!--<img width="275" height="435" src="typed/yellow-69-EP.jpg">-->
+	</body>
+	<script>
+'use strict';
+
+Object.defineProperties(Array.prototype, {
+	// count array elements with a certain property
+    count: {
+        value: function(fun) {
+			var c = 0;
+			for (var i = 0; i < this.length; ++i)
+				if (fun(this[i])) ++c;
+			return c;
+		}
+	},
+	// shuffle array in place (thanks StackOverflow!)
+	shuffle: {
+		value: function() {
+			for (var i = this.length - 1; i > 0; i--) {
+				var j = Math.floor(Math.random() * (i + 1));
+				var temp = this[i];
+				this[i] = this[j];
+				this[j] = temp;
+			}
+			return this;
+		}
+	}
+});
+
+
+function tryShowBuild() {
+	var sao = document.getElementById("ao").value !== "";
+	var sdb = document.getElementById("method").value !== "";
+	document.getElementById("build").style.display = sao && sdb ? 'block' : 'none';
+}
+
+function methodChange(select) {
+	var descs = document.getElementsByClassName('desc');
+	for (var i = 0; i < descs.length; ++i) descs[i].style.display = 'none';
+	document.getElementById(select.value).style.display = 'block';
+
+	tryShowBuild();
+}
+
+// build a mythos deck from the used cards with the given color counts
+function randBuild(used, counts) {
+	var gren = used.filter(function(card) { return card.match(/^gren/); }).shuffle();
+	var yelw = used.filter(function(card) { return card.match(/^yelw/); }).shuffle();
+	var blue = used.filter(function(card) { return card.match(/^blue/); }).shuffle();
+
+	var deck = [];
+
+	for (var i = 3; i-- > 0;) {
+		var stage = [];
+		for (var j = 0; j < counts[i * 3    ]; ++j) stage.push(gren.pop());
+		for (var j = 0; j < counts[i * 3 + 1]; ++j) stage.push(yelw.pop());
+		for (var j = 0; j < counts[i * 3 + 2]; ++j) stage.push(blue.pop());
+		deck = deck.concat(stage.shuffle());
+	}
+
+	return deck;
+}
+
+// add normal difficulty cards if there aren't enough in used for the given counts
+function addNormal(used, all, counts) {
+	var normal = all.filter(function(card) { return card.match(/-N/); }).shuffle();
+
+	var total = counts[0] + counts[3] + counts[6];
+	var have = used.count(function(card) { return card.match(/^gren/); });
+	var extra;
+	var added = 0;
+	if (have < total) {
+		extra = normal.filter(function(card) { return card.match(/^gren/); });
+		for (var i = 0; i < total - have; ++i) used.push(extra.pop());
+		added += total - have;
+	}
+	total = counts[1] + counts[4] + counts[7];
+	have = used.count(function(card) { return card.match(/^yelw/); });
+	if (have < total) {
+		extra = normal.filter(function(card) { return card.match(/^yelw/); });
+		for (var i = 0; i < total - have; ++i) used.push(extra.pop());
+		added += total - have;
+	}
+	total = counts[2] + counts[5] + counts[8];
+	have = used.count(function(card) { return card.match(/^blue/); });
+	if (have < total) {
+		extra = normal.filter(function(card) { return card.match(/^blue/); });
+		for (var i = 0; i < total - have; ++i) used.push(extra.pop());
+		added += total - have;
+	}
+
+	if (added > 0) alert("Not enough Mythos cards of that difficulty. Added " + added + " normal card" + (added > 1 ? 's' : '') + ". Buy some expansions!");
+
+	return used;
+}
+
+function stagedBuild(used, counts) {
+	var easy = used.filter(function(card) { return card.match(/-E/); });
+	var normal = used.filter(function(card) { return card.match(/-N/); });
+	var hard = used.filter(function(card) { return card.match(/-H/); });
+
+	var gren = hard.filter(function(card) { return card.match(/^gren/); }).shuffle();
+	var yelw = hard.filter(function(card) { return card.match(/^yelw/); }).shuffle();
+
+	var deck = [];
+
+	// third stage, no blue
+	var stage = [];
+	for (var j = 0; j < counts[6]; ++j) stage.push(gren.pop());
+	for (var j = 0; j < counts[7]; ++j) stage.push(yelw.pop());
+	deck = deck.concat(stage.shuffle());
+
+	var hard_rumors = document.getElementById('rudf').checked;
+
+	// second stage
+	gren = normal.filter(function(card) { return card.match(/^gren/); }).shuffle();
+	yelw = normal.filter(function(card) { return card.match(/^yelw/); }).shuffle();
+	var blue = (hard_rumors ? hard : normal).filter(function(card) { return card.match(/^blue/); }).shuffle();
+
+	stage = [];
+	for (var j = 0; j < counts[3]; ++j) stage.push(gren.pop());
+	for (var j = 0; j < counts[4]; ++j) stage.push(yelw.pop());
+	for (var j = 0; j < counts[5]; ++j) stage.push(blue.pop());
+	deck = deck.concat(stage.shuffle());
+
+	// first stage
+	gren = easy.filter(function(card) { return card.match(/^gren/); }).shuffle();
+	yelw = easy.filter(function(card) { return card.match(/^yelw/); }).shuffle();
+	blue = (hard_rumors ? normal : easy).filter(function(card) { return card.match(/^blue/); }).shuffle();
+
+	stage = [];
+	for (var j = 0; j < counts[0]; ++j) stage.push(gren.pop());
+	for (var j = 0; j < counts[1]; ++j) stage.push(yelw.pop());
+	for (var j = 0; j < counts[2]; ++j) stage.push(blue.pop());
+	deck = deck.concat(stage.shuffle());
+
+	return deck;
+}
+
+function customBuild(used, counts) {
+	// get sliders and convert to proportions
+	var easy = parseInt(document.getElementById("easyp").value, 10);
+	var normal = parseInt(document.getElementById("normalp").value, 10);
+	var hard = parseInt(document.getElementById("hardp").value, 10);
+	var total = easy + normal + hard;
+	if (total == 0) {
+		easy = normal = hard = 1 / 3;
+	} else {
+		easy /= total;
+		normal /= total;
+		hard /= total;
+	}
+
+	// build mini green/yellow/blue decks with those proportions
+	var colors = {};
+	var names = ['gren', 'yelw', 'blue'];
+	var random = 0;
+
+	for (var i = 0; i < names.length; ++i) {
+		var reg = new RegExp('^' + names[i]);
+		var color = used.filter(function(card) { return card.match(reg); }).shuffle();
+		var ecr = color.filter(function(card) { return card.match(/-E/); });
+		var ncr = color.filter(function(card) { return card.match(/-N/); });
+		var hcr = color.filter(function(card) { return card.match(/-H/); });
+
+		colors[names[i]] = [];
+
+		total = counts[i] + counts[i + 3] + counts[i + 6];
+		var nume = Math.ceil(total * easy);
+		var numn = Math.ceil(total * normal);
+		var numh = Math.ceil(total * hard);
+		for (var j = 0; j < nume && ecr.length; ++j) colors[names[i]].push(ecr.pop());
+		for (var j = 0; j < numn && ncr.length; ++j) colors[names[i]].push(ncr.pop());
+		for (var j = 0; j < numh && hcr.length; ++j) colors[names[i]].push(hcr.pop());
+
+		// just add random cards if we don't have enough
+		if (colors[names[i]].length < total) {
+			random += total - colors[names[i]].length;
+			var extra = ecr.concat(ncr).concat(hcr).shuffle();
+			while (colors[names[i]].length < total) colors[names[i]].push(extra.pop());
+		}
+	}
+
+	if (random > 0) alert("Not enough Mythos cards of that difficulty. Added " + random + " random card" + (random > 1 ? 's' : '') + ". Buy some expansions!");
+
+	// put them all back together and then build normally
+	return randBuild(colors['gren'].concat(colors['yelw']).concat(colors['blue']), counts);
+}
+
+function buildDeck() {
+	var form = document.forms[0];
+
+	// build regexp for selecting expansion cards
+	var expansions = 'B';
+	for (var i = 0; i < form['expansion'].length; ++i) {
+		if (form['expansion'][i].checked) expansions += form['expansion'][i].value;
+	}
+	expansions = new RegExp('-.[' + expansions + ']');
+
+	var used = cards.filter(function(card) { return card.match(expansions); });
+
+	var counts = ancient_ones[form['ao'].value];
+
+	var deck;
+
+	switch (form['method'].value) {
+		case 'random':
+			deck = randBuild(used, counts);
+			break;
+		case 'nohard':
+			used = used.filter(function(card) { return card.match(/-[EN]/); });
+			deck = randBuild(used, counts);
+			break;
+		case 'noeasy':
+			used = used.filter(function(card) { return card.match(/-[NH]/); });
+			deck = randBuild(used, counts);
+			break;
+		case 'easy':
+			var easy = used.filter(function(card) { return card.match(/-E/); });
+			// make sure there are enough cards
+			deck = randBuild(addNormal(easy, used, counts), counts);
+			break;
+		case 'hard':
+			var hard = used.filter(function(card) { return card.match(/-H/); });
+			// make sure there are enough cards
+			deck = randBuild(addNormal(hard, used, counts), counts);
+			break;
+		case 'staged':
+			deck = stagedBuild(used, counts);
+			break;
+		case 'custom':
+			deck = customBuild(used, counts);
+			break;
+	}
+
+	for (var i = 0; i < 9; ++i) {
+		document.getElementById('c' + i).innerHTML = counts[i];
+	}
+
+	// TODO do something with deck
+	console.log(deck);
+}
+
+var cards = ['blue-00-HR4', 'blue-01-HR2', 'blue-02-NR0', 'blue-03-NR4',
+'blue-04-ER3', 'blue-05-NM3', 'blue-06-EM5', 'blue-07-HM0', 'blue-08-HM3',
+'blue-09-NM0', 'blue-10-NM4', 'blue-11-HL3', 'blue-12-NL0', 'blue-13-EB3',
+'blue-14-HB0', 'blue-15-HB8', 'blue-16-HB3', 'blue-17-NB0', 'blue-18-HB0',
+'blue-19-NB4', 'blue-20-NB0', 'blue-21-EB0', 'blue-22-NB4', 'blue-23-EB4',
+'blue-24-EB4', 'blue-25-ED0', 'blue-26-ND3', 'blue-27-ND3', 'blue-28-ND3',
+'blue-29-HD0', 'blue-30-HD3', 'blue-31-NC0', 'blue-32-HC2', 'blue-33-HC5',
+'blue-34-NC3', 'blue-35-NC1', 'blue-36-HP0', 'blue-37-EP0', 'blue-38-NP4',
+'blue-39-EP3', 'blue-40-HP0', 'blue-41-NP4', 'blue-42-EC4', 'gren-00-ER',
+'gren-01-ER', 'gren-02-NR0', 'gren-03-NR0', 'gren-04-NR', 'gren-05-HR0',
+'gren-06-HR', 'gren-07-EP0', 'gren-08-EP', 'gren-09-NP', 'gren-10-NP',
+'gren-11-HM', 'gren-12-NM', 'gren-13-NL', 'gren-14-HM', 'gren-15-HL',
+'gren-16-NB', 'gren-17-EB', 'gren-18-EB', 'gren-19-HB0', 'gren-20-NB',
+'gren-21-NB0', 'gren-22-EB', 'gren-23-HM', 'gren-24-EB', 'gren-25-HB',
+'gren-26-EB', 'gren-27-HB', 'gren-28-NB', 'gren-29-HB', 'gren-30-NB',
+'gren-31-HB', 'gren-32-NB', 'gren-33-NB0', 'gren-34-EM', 'gren-35-NB',
+'gren-36-EM', 'gren-37-NM', 'gren-38-NM0', 'gren-39-NM0', 'gren-40-ED',
+'gren-41-ED', 'gren-42-ND', 'gren-43-ND0', 'gren-44-ND0', 'gren-45-HD',
+'gren-46-HD', 'gren-47-HD', 'gren-48-NC0', 'gren-49-NC', 'gren-50-NC',
+'gren-51-EC', 'gren-52-EC', 'gren-54-HC0', 'gren-55-HC', 'gren-56-NC0',
+'gren-59-HP', 'gren-60-HP', 'gren-61-HP0', 'gren-62-NP', 'yelw-00-NR',
+'yelw-01-ER', 'yelw-02-ER', 'yelw-03-HR', 'yelw-04-NR', 'yelw-05-NR',
+'yelw-06-HR', 'yelw-07-HR', 'yelw-08-HP', 'yelw-09-NP', 'yelw-10-NP',
+'yelw-11-NP', 'yelw-12-HP', 'yelw-13-HP', 'yelw-14-NM', 'yelw-15-HM',
+'yelw-16-HM', 'yelw-17-HM', 'yelw-18-HM', 'yelw-19-EM', 'yelw-20-NM',
+'yelw-21-EM', 'yelw-22-EM', 'yelw-23-NM', 'yelw-24-NM', 'yelw-25-NL',
+'yelw-26-HL', 'yelw-27-NB', 'yelw-28-HB', 'yelw-29-HB', 'yelw-30-NB',
+'yelw-31-NB', 'yelw-32-NB', 'yelw-33-NB', 'yelw-34-EB', 'yelw-35-HB',
+'yelw-36-EB', 'yelw-37-EB', 'yelw-38-HB', 'yelw-39-NB', 'yelw-40-NB',
+'yelw-41-NB', 'yelw-42-EB', 'yelw-43-NB', 'yelw-44-HB', 'yelw-45-EB',
+'yelw-46-NB', 'yelw-47-NB', 'yelw-48-ED', 'yelw-49-ED', 'yelw-50-ND',
+'yelw-51-ND', 'yelw-52-ND', 'yelw-53-ND', 'yelw-54-ND', 'yelw-55-HD',
+'yelw-56-HD', 'yelw-57-HD', 'yelw-58-NC', 'yelw-59-NC', 'yelw-60-NC',
+'yelw-61-EC', 'yelw-62-EC', 'yelw-63-HC', 'yelw-64-HC', 'yelw-65-HC',
+'yelw-66-NC', 'yelw-67-NC', 'yelw-68-EP', 'yelw-69-EP'];
+
+// most you need is 9 green, 10 yellow, 3 blue (for starting rumor)
+var ancient_ones = {
+                             // G1 Y1 B1 G2 Y2 B2 G3 Y3 B3
+	'Yog-Sothoth':              [0, 2, 1, 2, 3, 1, 3, 4, 0],
+	'Hypnos':                   [0, 2, 1, 2, 3, 1, 3, 4, 0],
+	'Nephren-Ka':               [0, 2, 2, 1, 3, 0, 3, 4, 0],
+	'Cthulhu':                  [0, 2, 2, 1, 3, 0, 3, 4, 0],
+	'Hastur':                   [0, 2, 2, 2, 3, 0, 3, 5, 0],
+	'Syzygy':                   [0, 2, 2, 3, 3, 0, 5, 5, 0],
+	'Ithaqua':                  [0, 2, 2, 4, 2, 0, 2, 4, 0],
+	'Yig':                      [1, 2, 1, 2, 3, 1, 2, 4, 0],
+	'Azathoth':                 [1, 2, 1, 2, 3, 1, 2, 4, 0],
+	'Shub-Niggurath':           [1, 2, 1, 3, 2, 1, 2, 4, 0],
+	'Atlach-Nacha':             [1, 2, 1, 3, 2, 1, 2, 4, 0],
+	'Abhoth':                   [1, 2, 1, 3, 2, 1, 2, 4, 0],
+	'Rise of the Elder Things': [2, 2, 1, 3, 3, 1, 4, 4, 0]
+};
+
+var select = document.getElementById("ao");
+var names = Object.keys(ancient_ones).sort();
+for (var i = 0; i < names.length; ++i) {
+	var opt = document.createElement('option');
+    opt.value = names[i];
+    opt.innerHTML = names[i];
+    select.appendChild(opt);
+}
+	</script>
+</html>
