@@ -362,7 +362,13 @@ function draw() {
 		card.innerHTML = html;
 	}
 
+	// add the card
 	div.insertBefore(card, div.firstChild);
+
+	// if the previously drawn card doesn't have a close button, remove it
+	if (card.nextSibling && !card.nextSibling.getElementsByClassName('close').length) {
+		card.parentNode.removeChild(card.nextSibling);
+	}
 
 	if (deck.length === 0) {
 		document.getElementById('draw').disabled = "disabled";
