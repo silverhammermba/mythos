@@ -7,27 +7,46 @@
 		<title>Eldritch Horror Mythos Companion</title>
 
 <style>
-		.desc, #build, #play {
-			display: none;
-		}
+	.desc, #build {
+		display: none;
+	}
 
-		table th {
-			text-align: right;
-		}
-		table td {
-			color: white;
-			font-weight: bold;
-			padding: 0 5px;
-		}
-		td.green {
-			background: #10783d;
-		}
-		td.yellow {
-			background: #b58b1d;
-		}
-		td.blue {
-			background: #3372b5;
-		}
+	table th {
+		text-align: right;
+	}
+	table td {
+		color: white;
+		font-weight: bold;
+		padding: 0 5px;
+	}
+	td.green {
+		background: #10783d;
+	}
+	td.yellow {
+		background: #b58b1d;
+	}
+	td.blue {
+		background: #3372b5;
+	}
+
+	.card {
+		position: relative;
+		width: 275px;
+		height: 435px;
+		background-image: url('cards/blue-30-HD3.jpg');
+		background-size: 100% 100%;
+	}
+
+	.card a {
+		position: absolute;
+		top: 0;
+		right: 0;
+		background: rgba(0, 0, 0, 0.7);
+		color: white;
+		text-decoration: none;
+		padding: 2px 2px 10px 10px;
+		border-radius: 0 0 0 100%;
+	}
 </style>
 	</head>
 	<body>
@@ -137,6 +156,9 @@
 			<p id="desc"></p>
 			<button type="button" id="draw" onclick="draw()">Draw</button><br>
 			<div id="cards">
+				<div class="card">
+					<a href="#" onclick="hide(this)">&#x2716;</a>
+				</div>
 			</div>
 		</div>
 	</body>
