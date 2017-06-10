@@ -7,9 +7,9 @@
 		<title>Eldritch Horror Mythos Companion</title>
 
 <style>
-.desc, #build {
-	display: none;
-}
+		.desc, #build, #play {
+			display: none;
+		}
 
 		table th {
 			text-align: right;
@@ -127,12 +127,15 @@
 			<button type="button" id="build" onclick="buildDeck()">Build</button>
 		</form>
 
-		<table>
-			<caption>Remaining</caption>
-			<tr><th>Stage I:  </th><td id="c0" class="green">0</td><td id="c1" class="yellow">0</td><td id="c2" class="blue">0</td></tr>
-			<tr><th>Stage II: </th><td id="c3" class="green">0</td><td id="c4" class="yellow">0</td><td id="c5" class="blue">0</td></tr>
-			<tr><th>Stage III:</th><td id="c6" class="green">0</td><td id="c7" class="yellow">0</td><td id="c8" class="blue">0</td></tr>
-		</table>
+		<div id="play">
+			<table id="remaining">
+				<caption>Remaining</caption>
+				<tr><th>Stage I:  </th><td id="c0" class="green">0</td><td id="c1" class="yellow">0</td><td id="c2" class="blue">0</td></tr>
+				<tr><th>Stage II: </th><td id="c3" class="green">0</td><td id="c4" class="yellow">0</td><td id="c5" class="blue">0</td></tr>
+				<tr><th>Stage III:</th><td id="c6" class="green">0</td><td id="c7" class="yellow">0</td><td id="c8" class="blue">0</td></tr>
+			</table>
+			<button type="button" id="draw" onclick="draw()">Draw</button><br>
+		</div>
 
 		<!--<img width="275" height="435" src="typed/yellow-69-EP.jpg">-->
 	</body>
@@ -201,28 +204,18 @@ function randBuild(used, counts) {
 function addNormal(used, all, counts) {
 	var normal = all.filter(function(card) { return card.match(/-N/); }).shuffle();
 
-	var total = counts[0] + counts[3] + counts[6];
-	var have = used.count(function(card) { return card.match(/^gren/); });
-	var extra;
+	var names = ['gren', 'yelw', 'blue'];
 	var added = 0;
-	if (have < total) {
-		extra = normal.filter(function(card) { return card.match(/^gren/); });
-		for (var i = 0; i < total - have; ++i) used.push(extra.pop());
-		added += total - have;
-	}
-	total = counts[1] + counts[4] + counts[7];
-	have = used.count(function(card) { return card.match(/^yelw/); });
-	if (have < total) {
-		extra = normal.filter(function(card) { return card.match(/^yelw/); });
-		for (var i = 0; i < total - have; ++i) used.push(extra.pop());
-		added += total - have;
-	}
-	total = counts[2] + counts[5] + counts[8];
-	have = used.count(function(card) { return card.match(/^blue/); });
-	if (have < total) {
-		extra = normal.filter(function(card) { return card.match(/^blue/); });
-		for (var i = 0; i < total - have; ++i) used.push(extra.pop());
-		added += total - have;
+
+	for (var j = 0; j < names.length; ++j) {
+		var total = counts[j] + counts[j + 3] + counts[j + 6];
+		var reg = new RegExp('^' + names[j]);
+		var have = used.count(function(card) { return card.match(reg); });
+		if (have < total) {
+			var extra = normal.filter(function(card) { return card.match(reg); });
+			for (var i = 0; i < total - have; ++i) used.push(extra.pop());
+			added += total - have;
+		}
 	}
 
 	if (added > 0) alert("Not enough Mythos cards of that difficulty. Added " + added + " normal card" + (added > 1 ? 's' : '') + ". Buy some expansions!");
@@ -230,6 +223,7 @@ function addNormal(used, all, counts) {
 	return used;
 }
 
+// build a staged deck
 function stagedBuild(used, counts) {
 	var easy = used.filter(function(card) { return card.match(/-E/); });
 	var normal = used.filter(function(card) { return card.match(/-N/); });
@@ -273,6 +267,7 @@ function stagedBuild(used, counts) {
 	return deck;
 }
 
+// build a deck with custom difficulty distribution
 function customBuild(used, counts) {
 	// get sliders and convert to proportions
 	var easy = parseInt(document.getElementById("easyp").value, 10);
@@ -323,6 +318,8 @@ function customBuild(used, counts) {
 	return randBuild(colors['gren'].concat(colors['yelw']).concat(colors['blue']), counts);
 }
 
+var deck;
+
 function buildDeck() {
 	var form = document.forms[0];
 
@@ -336,8 +333,6 @@ function buildDeck() {
 	var used = cards.filter(function(card) { return card.match(expansions); });
 
 	var counts = ancient_ones[form['ao'].value];
-
-	var deck;
 
 	switch (form['method'].value) {
 		case 'random':
@@ -373,8 +368,50 @@ function buildDeck() {
 		document.getElementById('c' + i).innerHTML = counts[i];
 	}
 
-	// TODO do something with deck
-	console.log(deck);
+	form.parentNode.removeChild(form);
+	document.getElementById('play').style.display = 'block';
+
+	// TODO verify deck with counts?
+}
+
+function draw() {
+	var div = document.getElementById('play');
+
+	if (deck.length === 0) return;
+
+	var name = deck.pop();
+
+	// decrement remaining count
+	var i;
+	switch (name.substr(0, 4)) {
+		case 'gren':
+			i = 0;
+			break;
+		case 'yelw':
+			i = 1;
+			break;
+		case 'blue':
+			i = 2;
+			break;
+	}
+
+	for (var j = 0; j < 3; ++j) {
+		if (parseInt(document.getElementById('c' + (i + j * 3)).innerHTML, 10) > 0)
+		{
+			document.getElementById('c' + (i + j * 3)).innerHTML -= 1;
+			break;
+		}
+	}
+
+	// create image
+	var card = document.createElement('img');
+	card.src = 'typed/' + name + '.jpg';
+	card.width = 275;
+	card.height = 435;
+
+	div.appendChild(card);
+
+	if (deck.length === 0) document.getElementById('draw').disabled = "disabled";
 }
 
 var cards = ['blue-00-HR4', 'blue-01-HR2', 'blue-02-NR0', 'blue-03-NR4',
