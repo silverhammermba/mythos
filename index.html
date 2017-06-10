@@ -135,9 +135,9 @@
 				<tr><th>Stage III:</th><td id="c6" class="green">0</td><td id="c7" class="yellow">0</td><td id="c8" class="blue">0</td></tr>
 			</table>
 			<button type="button" id="draw" onclick="draw()">Draw</button><br>
+			<div id="cards">
+			</div>
 		</div>
-
-		<!--<img width="275" height="435" src="typed/yellow-69-EP.jpg">-->
 	</body>
 	<script>
 'use strict';
@@ -375,7 +375,7 @@ function buildDeck() {
 }
 
 function draw() {
-	var div = document.getElementById('play');
+	var div = document.getElementById('cards');
 
 	if (deck.length === 0) return;
 
@@ -405,11 +405,11 @@ function draw() {
 
 	// create image
 	var card = document.createElement('img');
-	card.src = 'typed/' + name + '.jpg';
+	card.src = 'cards/' + name + '.jpg';
 	card.width = 275;
 	card.height = 435;
 
-	div.appendChild(card);
+	div.insertBefore(card, div.firstChild);
 
 	if (deck.length === 0) document.getElementById('draw').disabled = "disabled";
 }
