@@ -292,8 +292,8 @@ function buildDeck() {
 }
 
 function tokenCount(str) {
-	var match = str.match(/(\d).jpg/);
-	if (match) return parseInt(match[1], 10);
+	var match = str.match(/(\d|-).jpg/);
+	if (match) return match[1] === '-' ? -1 : parseInt(match[1], 10);
 	return null;
 }
 
@@ -333,13 +333,16 @@ function draw() {
 
 	var count = tokenCount(card.style.backgroundImage);
 	if (count !== null) {
-		card.innerHTML =
-			'<div class="token">'
-				+ '<a class="arrow left" href="#" onclick="loseToken(this)">◀</a>'
-				+ '<p>' + count + '</p>'
-				+ '<a class="arrow right" href="#" onclick="addToken(this)">▶</a>'
-			+ '</div>'
-			+ '<a class="close" href="#" onclick="hide(this)">✖</a>';
+		var html = '<a class="close" href="#" onclick="hide(this)">✖</a>';
+		if (count >= 0) {
+			html =
+				'<div class="token">'
+					+ '<a class="arrow left" href="#" onclick="loseToken(this)">◀</a>'
+					+ '<p>' + count + '</p>'
+					+ '<a class="arrow right" href="#" onclick="addToken(this)">▶</a>'
+				+ '</div>' + html;
+		}
+		card.innerHTML = html;
 	}
 
 	div.insertBefore(card, div.firstChild);
@@ -351,27 +354,27 @@ function draw() {
 	}
 }
 
-var cards = ['blue-00-HR4', 'blue-01-HR2', 'blue-02-NR0', 'blue-03-NR4',
-'blue-04-ER3', 'blue-05-NM3', 'blue-06-EM5', 'blue-07-HM0', 'blue-08-HM3',
-'blue-09-NM0', 'blue-10-NM4', 'blue-11-HL3', 'blue-12-NL0', 'blue-13-EB3',
-'blue-14-HB0', 'blue-15-HB8', 'blue-16-HB3', 'blue-17-NB0', 'blue-18-HB0',
-'blue-19-NB4', 'blue-20-NB0', 'blue-21-EB0', 'blue-22-NB4', 'blue-23-EB4',
-'blue-24-EB4', 'blue-25-ED0', 'blue-26-ND3', 'blue-27-ND3', 'blue-28-ND3',
-'blue-29-HD0', 'blue-30-HD3', 'blue-31-NC0', 'blue-32-HC2', 'blue-33-HC5',
-'blue-34-NC3', 'blue-35-NC1', 'blue-36-HP0', 'blue-37-EP0', 'blue-38-NP4',
+var cards = ['blue-00-HR4', 'blue-01-HR2', 'blue-02-NR-', 'blue-03-NR4',
+'blue-04-ER3', 'blue-05-NM3', 'blue-06-EM5', 'blue-07-HM-', 'blue-08-HM3',
+'blue-09-NM-', 'blue-10-NM4', 'blue-11-HL3', 'blue-12-NL-', 'blue-13-EB3',
+'blue-14-HB-', 'blue-15-HB8', 'blue-16-HB3', 'blue-17-NB-', 'blue-18-HB0',
+'blue-19-NB4', 'blue-20-NB-', 'blue-21-EB-', 'blue-22-NB4', 'blue-23-EB4',
+'blue-24-EB4', 'blue-25-ED-', 'blue-26-ND3', 'blue-27-ND3', 'blue-28-ND3',
+'blue-29-HD-', 'blue-30-HD3', 'blue-31-NC-', 'blue-32-HC2', 'blue-33-HC5',
+'blue-34-NC3', 'blue-35-NC1', 'blue-36-HP-', 'blue-37-EP-', 'blue-38-NP4',
 'blue-39-EP3', 'blue-40-HP0', 'blue-41-NP4', 'blue-42-EC4', 'gren-00-ER',
-'gren-01-ER', 'gren-02-NR0', 'gren-03-NR0', 'gren-04-NR', 'gren-05-HR0',
-'gren-06-HR', 'gren-07-EP0', 'gren-08-EP', 'gren-09-NP', 'gren-10-NP',
+'gren-01-ER', 'gren-02-NR-', 'gren-03-NR-', 'gren-04-NR', 'gren-05-HR-',
+'gren-06-HR', 'gren-07-EP-', 'gren-08-EP', 'gren-09-NP', 'gren-10-NP',
 'gren-11-HM', 'gren-12-NM', 'gren-13-NL', 'gren-14-HM', 'gren-15-HL',
-'gren-16-NB', 'gren-17-EB', 'gren-18-EB', 'gren-19-HB0', 'gren-20-NB',
-'gren-21-NB0', 'gren-22-EB', 'gren-23-HM', 'gren-24-EB', 'gren-25-HB',
+'gren-16-NB', 'gren-17-EB', 'gren-18-EB', 'gren-19-HB-', 'gren-20-NB',
+'gren-21-NB-', 'gren-22-EB', 'gren-23-HM', 'gren-24-EB', 'gren-25-HB',
 'gren-26-EB', 'gren-27-HB', 'gren-28-NB', 'gren-29-HB', 'gren-30-NB',
-'gren-31-HB', 'gren-32-NB', 'gren-33-NB0', 'gren-34-EM', 'gren-35-NB',
-'gren-36-EM', 'gren-37-NM', 'gren-38-NM0', 'gren-39-NM0', 'gren-40-ED',
-'gren-41-ED', 'gren-42-ND', 'gren-43-ND0', 'gren-44-ND0', 'gren-45-HD',
-'gren-46-HD', 'gren-47-HD', 'gren-48-NC0', 'gren-49-NC', 'gren-50-NC',
-'gren-51-EC', 'gren-52-EC', 'gren-54-HC0', 'gren-55-HC', 'gren-56-NC0',
-'gren-59-HP', 'gren-60-HP', 'gren-61-HP0', 'gren-62-NP', 'yelw-00-NR',
+'gren-31-HB', 'gren-32-NB', 'gren-33-NB-', 'gren-34-EM', 'gren-35-NB',
+'gren-36-EM', 'gren-37-NM', 'gren-38-NM-', 'gren-39-NM-', 'gren-40-ED',
+'gren-41-ED', 'gren-42-ND', 'gren-43-ND-', 'gren-44-ND-', 'gren-45-HD',
+'gren-46-HD', 'gren-47-HD', 'gren-48-NC-', 'gren-49-NC', 'gren-50-NC',
+'gren-51-EC', 'gren-52-EC', 'gren-54-HC-', 'gren-55-HC', 'gren-56-NC-',
+'gren-59-HP', 'gren-60-HP', 'gren-61-HP-', 'gren-62-NP', 'yelw-00-NR',
 'yelw-01-ER', 'yelw-02-ER', 'yelw-03-HR', 'yelw-04-NR', 'yelw-05-NR',
 'yelw-06-HR', 'yelw-07-HR', 'yelw-08-HP', 'yelw-09-NP', 'yelw-10-NP',
 'yelw-11-NP', 'yelw-12-HP', 'yelw-13-HP', 'yelw-14-NM', 'yelw-15-HM',
