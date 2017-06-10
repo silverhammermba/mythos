@@ -1,6 +1,7 @@
 # Eldritch Horror Mythos Companion #
 
-Saves you the effort of setting up the Mythos deck in Eldritch Horror.
+Saves you the effort of setting up the Mythos deck in Eldritch Horror. The live
+site is [here](https://silverhammermba.github.io/mythos/).
 
 ## Installation ##
 
