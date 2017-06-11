@@ -1,3 +1,7 @@
+footer {
+	padding: 10px;
+}
+
 .desc, #build, #play {
 	display: none;
 }
