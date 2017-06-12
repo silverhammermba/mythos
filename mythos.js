@@ -1,23 +1,5 @@
 'use strict';
 
-function loseToken(arrow) {
-	var p = arrow.nextSibling;
-	var count = parseInt(p.innerHTML, 10);
-	if (count === 0) return;
-	p.innerHTML = count - 1;
-}
-
-function addToken(arrow) {
-	var p = arrow.previousSibling;
-	var count = parseInt(p.innerHTML, 10);
-	p.innerHTML = count + 1;
-}
-
-function hide(x) {
-	var card = x.parentNode;
-	card.parentNode.removeChild(card);
-}
-
 // count array elements with a certain property
 Array.prototype.count = function(fun) {
 	var c = 0;
@@ -37,6 +19,25 @@ Array.prototype.shuffle = function() {
 	return this;
 };
 
+
+// for manipulating tokens
+function loseToken(arrow) {
+	var p = arrow.nextSibling;
+	var count = parseInt(p.innerHTML, 10);
+	if (count === 0) return;
+	p.innerHTML = count - 1;
+}
+function addToken(arrow) {
+	var p = arrow.previousSibling;
+	var count = parseInt(p.innerHTML, 10);
+	p.innerHTML = count + 1;
+}
+
+function hide(x) {
+	var card = x.parentNode;
+	card.parentNode.removeChild(card);
+}
+
 function tryShowBuild() {
 	var sao = document.getElementById("ao").value !== "";
 	var sdb = document.getElementById("method").value !== "";
@@ -46,9 +47,30 @@ function tryShowBuild() {
 function methodChange(select) {
 	var descs = document.getElementsByClassName('desc');
 	for (var i = 0; i < descs.length; ++i) descs[i].style.display = 'none';
+	if (select.value == "") return;
 	document.getElementById(select.value).style.display = 'block';
 
 	tryShowBuild();
+}
+
+// update percentage display for custom distribution
+function customPerc() {
+	// get sliders and convert to proportions
+	var easy = parseInt(document.getElementById("easyp").value, 10);
+	var normal = parseInt(document.getElementById("normalp").value, 10);
+	var hard = parseInt(document.getElementById("hardp").value, 10);
+	var total = easy + normal + hard;
+	if (total == 0) {
+		easy = normal = hard = 1 / 3;
+	} else {
+		easy /= total;
+		normal /= total;
+		hard /= total;
+	}
+
+	document.getElementById("easyd").innerHTML = Math.floor(easy * 100);
+	document.getElementById("normald").innerHTML = Math.floor(normal * 100);
+	document.getElementById("hardd").innerHTML = Math.floor(hard * 100);
 }
 
 // build a mythos deck from the used cards with the given color counts
@@ -442,4 +464,5 @@ window.onload = function() {
 	}
 
 	methodChange(document.getElementById("method"));
+	customPerc();
 }

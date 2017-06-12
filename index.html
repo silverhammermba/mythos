@@ -85,18 +85,18 @@
 
 			<div id="custom" class="desc">
 				<fieldset>
-					<legend>Difficulty distribution (per-color)</legend>
+					<legend>Difficulty distribution</legend>
 					<div>
-						<input type="range" min="0" max="100" name="easy" id="easyp">
-						<label for="easy">Easy</label>
+						<input type="range" min="0" max="100" name="easy" id="easyp" oninput="customPerc()">
+						<label for="easy"><span id="easyd"></span>% Easy</label>
 					</div>
 					<div>
-						<input type="range" min="0" max="100" name="normal" id="normalp">
-						<label for="normal">Normal</label>
+						<input type="range" min="0" max="100" name="normal" id="normalp" oninput="customPerc()">
+						<label for="normal"><span id="normald"></span>% Normal</label>
 					</div>
 					<div>
-						<input type="range" min="0" max="100" name="hard" id="hardp">
-						<label for="hard">Hard</label>
+						<input type="range" min="0" max="100" name="hard" id="hardp" oninput="customPerc()">
+						<label for="hard"><span id="hardd"></span>% Hard</label>
 					</div>
 				</fieldset>
 			</div>
