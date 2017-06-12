@@ -19,6 +19,11 @@ Array.prototype.shuffle = function() {
 	return this;
 };
 
+Array.prototype.filterReg = function(pat) {
+	if (!(pat instanceof RegExp)) pat = new RegExp(pat);
+	return this.filter(function(x) { return x.match(pat); });
+}
+
 
 // for manipulating tokens
 function loseToken(arrow) {
@@ -73,104 +78,89 @@ function customPerc() {
 	document.getElementById("hardd").innerHTML = Math.floor(hard * 100);
 }
 
-// build a mythos deck from the used cards with the given color counts
-function randBuild(used, counts) {
-	var gren = used.filter(function(card) { return card.match(/^gren/); }).shuffle();
-	var yelw = used.filter(function(card) { return card.match(/^yelw/); }).shuffle();
-	var blue = used.filter(function(card) { return card.match(/^blue/); }).shuffle();
+// build a mythos deck from the available (and already shuffled!) cards with the given color counts
+function randBuild(avail, counts) {
+	var gren = avail.filterReg(/^gren/);
+	var yelw = avail.filterReg(/^yelw/);
+	var blue = avail.filterReg(/^blue/);
 
-	var deck = [];
+	var d = [];
 
 	for (var i = 3; i-- > 0;) {
 		var stage = [];
 		for (var j = 0; j < counts[i * 3    ]; ++j) stage.push(gren.pop());
 		for (var j = 0; j < counts[i * 3 + 1]; ++j) stage.push(yelw.pop());
 		for (var j = 0; j < counts[i * 3 + 2]; ++j) stage.push(blue.pop());
-		deck = deck.concat(stage.shuffle());
+		d = d.concat(stage.shuffle());
 	}
 
-	return deck;
+	return d;
 }
 
-// add normal difficulty cards if there aren't enough in used for the given counts
-function addNormal(used, all, counts) {
-	var normal = all.filter(function(card) { return card.match(/-N/); }).shuffle();
-
-	var names = ['gren', 'yelw', 'blue'];
-	var added = 0;
-
-	for (var j = 0; j < names.length; ++j) {
-		var total = counts[j] + counts[j + 3] + counts[j + 6];
-		var reg = new RegExp('^' + names[j]);
-		var have = used.count(function(card) { return card.match(reg); });
-		if (have < total) {
-			var extra = normal.filter(function(card) { return card.match(reg); });
-			for (var i = 0; i < total - have; ++i) used.push(extra.pop());
-			added += total - have;
-		}
+function checkNormal(cards) {
+	var num = cards.count(function(card) { return card.match(/-N/); });
+	if (num > 0) {
+		alert("Not enough Mythos cards of that difficulty. Added " + num + " normal card" + (num > 1 ? 's' : '') + ". Buy some expansions!");
 	}
-
-	if (added > 0) alert("Not enough Mythos cards of that difficulty. Added " + added + " normal card" + (added > 1 ? 's' : '') + ". Buy some expansions!");
-
-	return used;
 }
 
-// add a starting rumor to deck from used
-function startingRumor(deck, used) {
+// add a starting rumor to deck from avail
+function startingRumor(d, avail) {
 	// find rumors not already in the deck
-	var rumors = used.filter(function(card) { return card.match(/^blue/) && deck.indexOf(card) < 0; }).shuffle();
+	var rumors = avail.filter(function(card) { return card.match(/^blue/) && d.indexOf(card) < 0; });
 	// add one
-	deck.push(rumors.pop());
+	d.push(rumors.pop());
+	return d;
 }
 
 // build a staged deck
-function stagedBuild(used, counts, strtrum) {
-	var easy = used.filter(function(card) { return card.match(/-E/); });
-	var normal = used.filter(function(card) { return card.match(/-N/); });
-	var hard = used.filter(function(card) { return card.match(/-H/); });
+function stagedBuild(avail, counts, strtrum) {
+	var easy = avail.filterReg(/-E/);
+	var normal = avail.filterReg(/-N/);
+	var hard = avail.filterReg(/-H/);
 
-	var gren = hard.filter(function(card) { return card.match(/^gren/); }).shuffle();
-	var yelw = hard.filter(function(card) { return card.match(/^yelw/); }).shuffle();
+	var gren = hard.filterReg(/^gren/);
+	var yelw = hard.filterReg(/^yelw/);
 
-	var deck = [];
+	var d = [];
 
 	// third stage, no blue
 	var stage = [];
 	for (var j = 0; j < counts[6]; ++j) stage.push(gren.pop());
 	for (var j = 0; j < counts[7]; ++j) stage.push(yelw.pop());
-	deck = deck.concat(stage.shuffle());
+	d = d.concat(stage.shuffle());
 
 	var hard_rumors = document.getElementById('rudf').checked;
 
 	// second stage
-	gren = normal.filter(function(card) { return card.match(/^gren/); }).shuffle();
-	yelw = normal.filter(function(card) { return card.match(/^yelw/); }).shuffle();
-	var blue = (hard_rumors ? hard : normal).filter(function(card) { return card.match(/^blue/); }).shuffle();
+	gren = normal.filterReg(/^gren/);
+	yelw = normal.filterReg(/^yelw/);
+	var blue = (hard_rumors ? hard : normal).filterReg(/^blue/);
 
 	stage = [];
 	for (var j = 0; j < counts[3]; ++j) stage.push(gren.pop());
 	for (var j = 0; j < counts[4]; ++j) stage.push(yelw.pop());
 	for (var j = 0; j < counts[5]; ++j) stage.push(blue.pop());
-	deck = deck.concat(stage.shuffle());
+	d = d.concat(stage.shuffle());
 
 	// first stage
-	gren = easy.filter(function(card) { return card.match(/^gren/); }).shuffle();
-	yelw = easy.filter(function(card) { return card.match(/^yelw/); }).shuffle();
-	blue = (hard_rumors ? normal : easy).filter(function(card) { return card.match(/^blue/); }).shuffle();
+	gren = easy.filterReg(/^gren/);
+	yelw = easy.filterReg(/^yelw/);
+	blue = (hard_rumors ? normal : easy).filterReg(/^blue/);
 
 	stage = [];
 	for (var j = 0; j < counts[0]; ++j) stage.push(gren.pop());
 	for (var j = 0; j < counts[1]; ++j) stage.push(yelw.pop());
 	for (var j = 0; j < counts[2]; ++j) stage.push(blue.pop());
-	deck = deck.concat(stage.shuffle());
+	d = d.concat(stage.shuffle());
 
-	if (strtrum) deck.push(blue.pop());
+	if (strtrum) d.push(blue.pop());
 
-	return deck;
+	return d;
 }
 
 // build a deck with custom difficulty distribution
-function customBuild(used, counts, strtrum, desc) {
+function customBuild(avail, counts, strtrum, desc) {
 	// get sliders and convert to proportions
 	var easy = parseInt(document.getElementById("easyp").value, 10);
 	var normal = parseInt(document.getElementById("normalp").value, 10);
@@ -192,11 +182,10 @@ function customBuild(used, counts, strtrum, desc) {
 	var random = 0;
 
 	for (var i = 0; i < names.length; ++i) {
-		var reg = new RegExp('^' + names[i]);
-		var color = used.filter(function(card) { return card.match(reg); }).shuffle();
-		var ecr = color.filter(function(card) { return card.match(/-E/); });
-		var ncr = color.filter(function(card) { return card.match(/-N/); });
-		var hcr = color.filter(function(card) { return card.match(/-H/); });
+		var color = avail.filterReg('^' + names[i]);
+		var ecr = color.filterReg(/-E/);
+		var ncr = color.filterReg(/-N/);
+		var hcr = color.filterReg(/-H/);
 
 		colors[names[i]] = [];
 
@@ -221,12 +210,14 @@ function customBuild(used, counts, strtrum, desc) {
 	if (random > 0) alert("Not enough Mythos cards of that difficulty. Added " + random + " random card" + (random > 1 ? 's' : '') + ". Buy some expansions!");
 
 	// put them all back together and then build normally
-	var deck = randBuild(colors['gren'].concat(colors['yelw']).concat(colors['blue']), counts);
-	if (strtrum) startingRumor(deck, colors['blue']);
-	return deck;
+	var d = randBuild(colors['gren'].concat(colors['yelw']).concat(colors['blue']).shuffle(), counts);
+	if (strtrum) startingRumor(d, colors['blue']);
+	return d;
 }
 
+var drawn = 0;
 var deck;
+var avail;
 
 // warning to show when leaving after deck has been built
 function leaveWarn(e) {
@@ -245,51 +236,50 @@ function buildDeck() {
 	for (var i = 0; i < form['expansion'].length; ++i) {
 		if (form['expansion'][i].checked) expansions += form['expansion'][i].value;
 	}
-	expansions = new RegExp('-.[' + expansions + ']');
 
-	var used = cards.filter(function(card) { return card.match(expansions); });
+	avail = cards.filterReg('-.[' + expansions + ']').shuffle();
 
 	var counts = ancient_ones[form['ao'].value];
 	var strtrum = form['startingrumor'].checked;
 
 	switch (form['method'].value) {
 		case 'random':
-			deck = randBuild(used, counts);
-			if (strtrum) startingRumor(deck, used);
+			deck = randBuild(avail, counts);
+			if (strtrum) startingRumor(deck, avail);
 			desc.innerHTML = 'Normal setup.';
 			break;
 		case 'nohard':
-			used = used.filter(function(card) { return card.match(/-[EN]/); });
-			deck = randBuild(used, counts);
-			if (strtrum) startingRumor(deck, used);
+			avail = avail.filterReg(/-[EN]/);
+			deck = randBuild(avail, counts);
+			if (strtrum) startingRumor(deck, avail);
 			desc.innerHTML = 'No hard cards.';
 			break;
 		case 'noeasy':
-			used = used.filter(function(card) { return card.match(/-[NH]/); });
-			deck = randBuild(used, counts);
-			if (strtrum) startingRumor(deck, used);
+			avail = avail.filterReg(/-[NH]/);
+			deck = randBuild(avail, counts);
+			if (strtrum) startingRumor(deck, avail);
 			desc.innerHTML = 'No easy cards.';
 			break;
 		case 'easy':
-			var easy = used.filter(function(card) { return card.match(/-E/); });
-			// make sure there are enough cards
-			deck = randBuild(addNormal(easy, used, counts), counts);
-			if (strtrum) startingRumor(deck, easy);
+			avail = avail.filterReg(/-N/).concat(avail.filterReg(/-E/));
+			deck = randBuild(avail, counts);
+			if (strtrum) startingRumor(deck, avail);
+			checkNormal(deck);
 			desc.innerHTML = 'All easy cards.';
 			break;
 		case 'hard':
-			var hard = used.filter(function(card) { return card.match(/-H/); });
-			// make sure there are enough cards
-			deck = randBuild(addNormal(hard, used, counts), counts);
-			if (strtrum) startingRumor(deck, hard);
+			avail = avail.filterReg(/-N/).concat(avail.filterReg(/-H/));
+			deck = randBuild(avail, counts);
+			if (strtrum) startingRumor(deck, avail);
+			checkNormal(deck);
 			desc.innerHTML = 'All hard cards.';
 			break;
 		case 'staged':
-			deck = stagedBuild(used, counts, strtrum);
+			deck = stagedBuild(avail, counts, strtrum);
 			desc.innerHTML = 'Staged deck.';
 			break;
 		case 'custom':
-			deck = customBuild(used, counts, strtrum, desc);
+			deck = customBuild(avail, counts, strtrum, desc);
 			break;
 	}
 
@@ -314,7 +304,7 @@ function buildDeck() {
 }
 
 function hideShow() {
-	document.getElementsByTagName('body')[0].classList.toggle('showcards');
+	document.getElementById('cards').classList.toggle('showcards');
 }
 
 // return how many eldritch tokens this card starts with (-1 for reckoning but no tokens)
@@ -332,11 +322,11 @@ function hasClues(str) {
 }
 
 function draw() {
-	if (deck.length === 0) return;
+	if (drawn == deck.length) return;
 
 	var div = document.getElementById('cards');
 
-	var name = deck.pop();
+	var name = deck[deck.length - ++drawn];
 
 	// decrement remaining count
 	var i;
@@ -396,7 +386,7 @@ function draw() {
 		card.nextSibling.classList.add('discarded');
 	}
 
-	if (deck.length === 0) {
+	if (drawn == deck.length) {
 		document.getElementById('draw').disabled = "disabled";
 		// safe to navigate away
 		window.removeEventListener("beforeunload", leaveWarn);
@@ -439,7 +429,7 @@ var cards = ['blue-00-HR4c', 'blue-01-HR2', 'blue-02-NR-', 'blue-03-NR4',
 'yelw-61-EC', 'yelw-62-EC', 'yelw-63-HC', 'yelw-64-HC', 'yelw-65-HC',
 'yelw-66-NC', 'yelw-67-NC', 'yelw-68-EP', 'yelw-69-EP'];
 
-// most you need is 9 green, 10 yellow, 3 blue (for starting rumor)
+// most you need is 10 green, 11 yellow, 3 blue (for starting rumor)
 var ancient_ones = {
                              // G1 Y1 B1 G2 Y2 B2 G3 Y3 B3
 	'Yog-Sothoth':              [0, 2, 1, 2, 3, 1, 3, 4, 0],

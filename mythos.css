@@ -1,10 +1,3 @@
-body .discarded {
-	display: none;
-}
-body.showcards .discarded {
-	display: inline-block;
-}
-
 footer {
 	padding: 10px;
 }
@@ -48,6 +41,13 @@ td.yellow {
 }
 td.blue {
 	background: #3372b5;
+}
+
+#cards .discarded {
+	display: none;
+}
+#cards.showcards .discarded {
+	display: inline-block;
 }
 
 .card {
