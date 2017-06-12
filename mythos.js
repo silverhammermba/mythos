@@ -322,7 +322,7 @@ function hasClues(str) {
 }
 
 function draw() {
-	if (drawn == deck.length) return;
+	if (drawn == deck.length) return false;
 
 	var div = document.getElementById('cards');
 
@@ -391,6 +391,8 @@ function draw() {
 		// safe to navigate away
 		window.removeEventListener("beforeunload", leaveWarn);
 	}
+
+	return true;
 }
 
 function eibon() {
@@ -421,8 +423,7 @@ function eibon() {
 
 	// discard three
 	for (var i = 0; i < 3; ++i) {
-		draw();
-		document.getElementsByClassName('card')[0].classList.add('discarded');
+		if (draw()) document.getElementsByClassName('card')[0].classList.add('discarded');
 	}
 }
 
