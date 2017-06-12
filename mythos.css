@@ -1,3 +1,10 @@
+body .discarded {
+	display: none;
+}
+body.showcards .discarded {
+	display: inline-block;
+}
+
 footer {
 	padding: 10px;
 }

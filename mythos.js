@@ -35,7 +35,7 @@ function addToken(arrow) {
 
 function hide(x) {
 	var card = x.parentNode;
-	card.parentNode.removeChild(card);
+	card.classList.add('discarded');
 }
 
 function tryShowBuild() {
@@ -313,6 +313,10 @@ function buildDeck() {
 	}
 }
 
+function hideShow() {
+	document.getElementsByTagName('body')[0].classList.toggle('showcards');
+}
+
 // return how many eldritch tokens this card starts with (-1 for reckoning but no tokens)
 function tokenCount(str) {
 	var match = str.match(/(\d|-)c?.jpg/);
@@ -389,7 +393,7 @@ function draw() {
 
 	// if the previously drawn card doesn't have a close button, remove it
 	if (card.nextSibling && !card.nextSibling.getElementsByClassName('close').length) {
-		card.parentNode.removeChild(card.nextSibling);
+		card.nextSibling.classList.add('discarded');
 	}
 
 	if (deck.length === 0) {
