@@ -393,6 +393,39 @@ function draw() {
 	}
 }
 
+function eibon() {
+	if (!window.confirm("Are you sure? This cannot be undone.")) return;
+
+	var green = avail.filter(function(card) { return card.match(/^gren/) && deck.indexOf(card) < 0; }).pop();
+	var yellw = avail.filter(function(card) { return card.match(/^yelw/) && deck.indexOf(card) < 0; }).pop();
+	// TODO check for undefined?
+
+	var tail = deck.slice(deck.length - drawn, deck.length);
+	var head = deck.slice(0, deck.length - drawn);
+
+	deck = head.concat([green, yellw]).shuffle().concat(tail);
+
+	// adjust counts
+	for (var i = 0; i < 3; ++i) {
+		var total = 0;
+
+		for (var j = 0; j < 3; ++j) {
+			var cell = document.getElementById('c' + (i + j * 3));
+			total += parseInt(cell.innerHTML, 10);
+			cell.innerHTML = '0';
+		}
+
+		if (i < 2) ++total;
+		document.getElementById('c' + (i + 6)).innerHTML = total;
+	}
+
+	// discard three
+	for (var i = 0; i < 3; ++i) {
+		draw();
+		document.getElementsByClassName('card')[0].classList.add('discarded');
+	}
+}
+
 var cards = ['blue-00-HR4c', 'blue-01-HR2', 'blue-02-NR-', 'blue-03-NR4',
 'blue-04-ER3', 'blue-05-NM3', 'blue-06-EM5', 'blue-07-HM-', 'blue-08-HM3',
 'blue-09-NM-', 'blue-10-NM4', 'blue-11-HL3', 'blue-12-NL-', 'blue-13-EB3',

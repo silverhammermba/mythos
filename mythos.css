@@ -2,6 +2,10 @@ footer {
 	padding: 10px;
 }
 
+#eibon {
+	font-variant-caps: small-caps;
+}
+
 .desc, #build, #play {
 	display: none;
 }
