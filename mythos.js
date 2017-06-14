@@ -321,7 +321,7 @@ function hasClues(str) {
 	return false;
 }
 
-function draw() {
+function draw(autodiscard) {
 	if (drawn == deck.length) return false;
 
 	var div = document.getElementById('cards');
@@ -382,7 +382,7 @@ function draw() {
 	div.insertBefore(card, div.firstChild);
 
 	// if the previously drawn card doesn't have a close button, remove it
-	if (card.nextSibling && !card.nextSibling.getElementsByClassName('close').length) {
+	if (autodiscard && card.nextSibling && !card.nextSibling.getElementsByClassName('close').length) {
 		card.nextSibling.classList.add('discarded');
 	}
 
@@ -395,17 +395,14 @@ function draw() {
 	return true;
 }
 
-function eibon() {
-	if (!window.confirm("Are you sure? This cannot be undone.")) return;
-
-	var green = avail.filter(function(card) { return card.match(/^gren/) && deck.indexOf(card) < 0; }).pop();
-	var yellw = avail.filter(function(card) { return card.match(/^yelw/) && deck.indexOf(card) < 0; }).pop();
-	// TODO check for undefined?
-
+// shuffle in cards to the remainder of the mythos deck
+function shuffleDeck(add) {
 	var tail = deck.slice(deck.length - drawn, deck.length);
 	var head = deck.slice(0, deck.length - drawn);
 
-	deck = head.concat([green, yellw]).shuffle().concat(tail);
+	if (add) head = head.concat(add);
+
+	var colors = [/^gren/, /^yelw/, /^blue/];
 
 	// adjust counts
 	for (var i = 0; i < 3; ++i) {
@@ -417,14 +414,40 @@ function eibon() {
 			cell.innerHTML = '0';
 		}
 
-		if (i < 2) ++total;
+		for (var j = 0; add && j < add.length; ++j) {
+			if (add[j].match(colors[i])) ++total;
+		}
+
 		document.getElementById('c' + (i + 6)).innerHTML = total;
 	}
 
+	deck = head.shuffle().concat(tail);
+}
+
+// discard the top card of the mythos deck
+function discardTop() {
+	document.getElementsByClassName('card')[0].classList.add('discarded');
+}
+
+function eibon() {
+	if (!window.confirm("Are you sure? This cannot be undone.")) return;
+
+	var green = avail.filter(function(card) { return card.match(/^gren/) && deck.indexOf(card) < 0; }).pop();
+	var yellw = avail.filter(function(card) { return card.match(/^yelw/) && deck.indexOf(card) < 0; }).pop();
+	// TODO check for undefined?
+
+	shuffleDeck([green, yellw]);
+
 	// discard three
-	for (var i = 0; i < 3; ++i) {
-		if (draw()) document.getElementsByClassName('card')[0].classList.add('discarded');
-	}
+	for (var i = 0; i < 3; ++i) if (draw(false)) discardTop();
+}
+
+function lostTime() {
+	if (!window.confirm("Are you sure? This cannot be undone.")) return;
+
+	if (draw(false)) discardTop();
+
+	shuffleDeck();
 }
 
 var cards = ['blue-00-HR4c', 'blue-01-HR2', 'blue-02-NR-', 'blue-03-NR4',

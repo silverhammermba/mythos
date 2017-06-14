@@ -54,6 +54,14 @@
 				<option value="custom">Custom distribution</option>
 			</select>
 
+			<select id="prelude">
+				<option style="display:none" selected="selected" value="">Prelude</option>
+				<option class="rumor" value="web">Web Between Worlds</option>
+				<option class="rumor" value="yellow">The King In Yellow</option>
+				<option class="rumor" value="north">Rumors From the North</option>
+				<option value="">Other</option>
+			</select>
+
 			<div id="srcb"><label><input type="checkbox" id="strm" name="startingrumor" value="starting"> Starting rumor?</label></div>
 
 			<p id="random" class="desc">
@@ -116,12 +124,13 @@
 				</table>
 				<p id="desc"></p>
 				</div><div id="but">
-				<button type="button" id="draw" onclick="draw()">DRAW</button><br>
+				<button type="button" id="draw" onclick="draw(true)">DRAW</button><br>
 				<div>
 			</section>
 			<section id="cards"></section>
 			<button type="button" id="hideshow" onclick="hideShow()">Show/Hide discarded cards</button>
-			<button type="button" id="eibon" onclick="eibon()">Pact with Eibon</button>
+			<button type="button" id="eibon" class="special" onclick="eibon()">Pact with Eibon</button>
+			<button type="button" id="time" class="special" onclick="lostTime()">Lost to Time</button>
 		</div>
 		<section>
 			<footer>
