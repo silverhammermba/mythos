@@ -317,6 +317,7 @@ function buildDeck() {
 	// remove form, show the card area
 	form.parentNode.removeChild(form);
 	document.getElementById('play').style.display = 'block';
+	document.getElementById('random').style.display = 'block';
 	// warn when leaving the page
 	window.addEventListener("beforeunload", leaveWarn);
 
@@ -337,6 +338,13 @@ function buildDeck() {
 		document.getElementById('c2').innerHTML = counts[2] + 1;
 		draw(false);
 	}
+
+	var start = new Date();
+	var elm = document.getElementById('timer');
+	setInterval(function() {
+		var elapsed = Math.floor((new Date() - start) / 1000);
+		elm.innerHTML = Math.floor(elapsed / 60) + ":" + ("0" + (elapsed % 60)).slice(-2);
+	}, 1000);
 }
 
 function hideShow() {

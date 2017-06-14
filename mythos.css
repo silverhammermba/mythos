@@ -6,7 +6,7 @@ footer {
 	font-variant-caps: small-caps;
 }
 
-.desc, #build, #play {
+.desc, #build, #play, #random {
 	display: none;
 }
 
