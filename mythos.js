@@ -239,6 +239,32 @@ function buildDeck() {
 
 	avail = cards.filterReg('-.[' + expansions + ']').shuffle();
 
+	var premythos;
+	var precount;
+	switch(form['prelude'].value) {
+		case 'web':
+			avail = avail.filter(function(card) { return !card.match(/^blue-16/); });
+			if (form['ao'].value !== 'Atlach-Nacha') {
+				premythos = 'blue-16-HB3';
+				precount = 4;
+			}
+			break;
+		case 'yellow':
+			avail = avail.filter(function(card) { return !card.match(/^blue-35/); });
+			if (form['ao'].value !== 'Hastur') {
+				premythos = 'blue-35-NC1';
+				precount = 2;
+			}
+			break;
+		case 'north':
+			avail = avail.filter(function(card) { return !card.match(/^blue-22/); });
+			if (form['ao'].value !== 'Ithaqua') {
+				premythos = 'blue-22-NB4';
+				precount = 6;
+			}
+			break;
+	}
+
 	var counts = ancient_ones[form['ao'].value];
 	var strtrum = form['startingrumor'].checked;
 
@@ -296,10 +322,20 @@ function buildDeck() {
 
 	// TODO verify deck with counts?
 
+	if (premythos) {
+		deck.push(premythos);
+
+		document.getElementById('c2').innerHTML = counts[2] + 1;
+		draw(false);
+
+		var cs = document.getElementsByClassName('card');
+		cs[cs.length - 1].querySelector('.eldritch p').innerHTML = precount;
+	}
+
 	// handle starting rumor
 	if (strtrum) {
 		document.getElementById('c2').innerHTML = counts[2] + 1;
-		draw();
+		draw(false);
 	}
 }
 
