@@ -6,6 +6,10 @@ footer {
 	font-variant-caps: small-caps;
 }
 
+#score {
+	font-size: 8pt;
+}
+
 .desc, #build, #play, #random {
 	display: none;
 }
@@ -26,7 +30,7 @@ footer {
 #but button {
 	width: 100%;
 	height: 100%;
-	font-size: 50px;
+	font-size: 48pt;
 }
 
 table th {
