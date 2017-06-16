@@ -63,6 +63,7 @@ td.blue {
 	position: relative;
 	width: 275px;
 	height: 435px;
+	margin: 1px;
 	background-size: 100% 100%;
 	border-radius: 10px;
 }
@@ -124,6 +125,7 @@ td.blue {
 	background: rgba(0, 0, 0, 0.7);
 	color: white;
 	text-decoration: none;
-	padding: 2px 2px 10px 10px;
+	padding: 4px 4px 8px 10px;
 	border-radius: 0 10px 0 80%;
+	font-size: 9pt;
 }
