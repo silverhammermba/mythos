@@ -24,7 +24,6 @@ Array.prototype.filterReg = function(pat) {
 	return this.filter(function(x) { return x.match(pat); });
 }
 
-
 // for manipulating tokens
 function loseToken(arrow) {
 	var p = arrow.nextSibling;
@@ -174,7 +173,7 @@ function customBuild(avail, counts, strtrum, desc) {
 		hard /= total;
 	}
 
-	desc.innerHTML = "Custom: " + Math.floor(easy * 100) + "% easy, " + Math.floor(normal * 100) + "% normal, " + Math.floor(hard * 100) + "% hard.";
+	desc.innerHTML = "Custom: " + Math.round(easy * 100) + "% easy, " + Math.round(normal * 100) + "% normal, " + Math.round(hard * 100) + "% hard.";
 
 	// build mini green/yellow/blue decks with those proportions
 	var colors = {};
@@ -192,9 +191,49 @@ function customBuild(avail, counts, strtrum, desc) {
 		total = counts[i] + counts[i + 3] + counts[i + 6];
 		// if starting rumor, ensure we have an extra blue
 		if (strtrum && i == 2) ++total;
-		var nume = Math.ceil(total * easy);
-		var numn = Math.ceil(total * normal);
-		var numh = Math.ceil(total * hard);
+
+		var nume = Math.round(total * easy);
+		var numn = Math.round(total * normal);
+		var numh = Math.round(total * hard);
+
+		if (nume + numn + numh === total + 1) {
+			var reme = normal + hard;
+			var remn = hard + easy;
+			var remh = easy + normal;
+
+			// remove 0s from the distribution first
+			if (nume === 0) reme = 0;
+			if (numn === 0) remn = 0;
+			if (numh === 0) remh = 0;
+
+			var ttot = reme + remn + remh;
+			reme /= ttot;
+			remn /= ttot;
+			remh /= ttot; // XXX technically unneeded, but whatevs
+
+			var r = Math.random();
+			if (r < reme) {
+				--nume;
+			} else if (r < reme + remn) {
+				--numn;
+			} else {
+				--numh;
+			}
+
+			if (nume < 0 || numn < 0 || numh < 0) console.log("custom build failed!", total, easy, normal, hard);
+		} else if (nume + numn + numh === total - 1) {
+			var r = Math.random();
+			if (r < easy) {
+				++nume;
+			} else if (r < easy + normal) {
+				++numn;
+			} else {
+				++numh;
+			}
+		} else if (nume + numn + numh !== total) {
+			console.log("custom build failed!", total, easy, normal, hard);
+		}
+
 		for (var j = 0; j < nume && ecr.length; ++j) colors[names[i]].push(ecr.pop());
 		for (var j = 0; j < numn && ncr.length; ++j) colors[names[i]].push(ncr.pop());
 		for (var j = 0; j < numh && hcr.length; ++j) colors[names[i]].push(hcr.pop());
