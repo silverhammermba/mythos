@@ -2,8 +2,20 @@ footer {
 	padding: 10px;
 }
 
-.special, #prelude .rumor {
+.special, #prelude .mythosname, .rumor {
 	font-variant-caps: small-caps;
+}
+
+.rumor {
+	font-weight: bold;
+	font-style: italic;
+}
+
+.card .action {
+	position: absolute;
+	bottom: 10px;
+	width: 90%;
+	margin-left: 5%;
 }
 
 #score {

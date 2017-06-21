@@ -458,8 +458,15 @@ function draw(autodiscard) {
 				+ '</div>';
 		}
 		html += '<a class="close" href="#" onclick="hide(this); return false">✖</a>';
+
 		card.innerHTML = html;
 	}
+
+	// The Storm
+	if (name === 'yelw-28-HB') {
+		card.innerHTML = '<button type="button" class="action" onclick="storm()" id="storm">Draw a <span class="rumor">Rumor</span> Mythos card from the game box.</button>';
+	}
+
 
 	// add the card
 	div.insertBefore(card, div.firstChild);
@@ -531,6 +538,22 @@ function lostTime() {
 	if (draw(false)) discardTop();
 
 	shuffleDeck();
+}
+
+function storm() {
+	if (!window.confirm("Are you sure? This cannot be undone.")) return;
+
+	document.getElementById('storm').disabled = "disabled";
+
+	var rumor = avail.filter(function(card) { return card.match(/^blue/) && deck.indexOf(card) < 0; }).pop();
+	// TODO check for undefined?
+
+	deck.splice(deck.length - drawn, 0, rumor);
+
+	var cell = document.getElementById('c2');
+	cell.innerHTML = parseInt(cell.innerHTML, 10) + 1;
+
+	draw(true);
 }
 
 var cards = ['blue-00-HR4c', 'blue-01-HR2', 'blue-02-NR-', 'blue-03-NR4',
