@@ -616,6 +616,32 @@ function storm() {
 	draw(true);
 }
 
+function newgame() {
+	if (!window.confirm("Are you sure? This cannot be undone.")) return;
+
+	// restore global state, discard save
+	drawn = 0;
+	deck = undefined;
+	avail = undefined;
+	start = undefined;
+	prevtime = 0;
+	localStorage.save_version = -1;
+
+	// reshow form
+	document.forms[0].style.display = 'block';
+	document.getElementById('play').style.display = 'none';
+	document.getElementById('etc').style.display = 'none';
+	window.removeEventListener("beforeunload", save);
+
+	// remove previous cards
+	var cards = document.getElementById('cards');
+	Array.from(cards.children).forEach(function(card) {
+		cards.removeChild(card);
+	});
+	// re-enable draw button
+	document.getElementById('draw').disabled = "";
+}
+
 var cards = ['blue-00-HR4c', 'blue-01-HR2', 'blue-02-NR-', 'blue-03-NR4',
 'blue-04-ER3', 'blue-05-NM3', 'blue-06-EM5', 'blue-07-HM-', 'blue-08-HM3',
 'blue-09-NM-', 'blue-10-NM4', 'blue-11-HL3', 'blue-12-NL-', 'blue-13-EB3',
