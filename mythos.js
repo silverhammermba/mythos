@@ -256,16 +256,85 @@ function customBuild(avail, counts, strtrum, desc) {
 	return d;
 }
 
-var drawn = 0;
-var deck;
-var avail;
+/* global state */
+var drawn = 0; // how many cards have been drawn
+var deck; // cards in Mythos deck
+var avail; // available cards (for adding later)
+var start; // game start time
+var prevtime = 0; // elapsed time from previous session
+var save_version = 1; // to avoid conflicts in save info
 
-// warning to show when leaving after deck has been built
-function leaveWarn(e) {
-	var msg = 'Are you sure you want to leave this page? Your Mythos deck will be lost.';
+function save() {
+	localStorage.drawn = drawn;
+	localStorage.deck = JSON.stringify(deck);
+	localStorage.avail = JSON.stringify(avail);
+	localStorage.prevtime = prevtime + (new Date() - start) / 1000;
+	localStorage.save_version = save_version;
 
-	(e || window.event).returnValue = msg;
-	return msg;
+	// store stage counts
+	var counts = [];
+	for (var i = 0; i < 9; ++i) {
+		counts[i] = parseInt(document.getElementById('c' + i).innerHTML, 10);
+	}
+	localStorage.counts = JSON.stringify(counts);
+
+	// find additional card state, such as discarded/num tokens
+	var state = [];
+	var cards = document.querySelectorAll('.card');
+	for (var i = 0; i < cards.length; ++i) {
+		var discarded = cards[i].classList.contains('discarded');
+		var tokens = Array.from(cards[i].querySelectorAll('.token p')).map(function(p) { return parseInt(p.innerHTML, 10); });
+		state.push([discarded, tokens]);
+	}
+
+	localStorage.state = JSON.stringify(state);
+}
+
+function load() {
+	deck = JSON.parse(localStorage.deck);
+	avail = JSON.parse(localStorage.avail);
+	prevtime = parseFloat(localStorage.prevtime);
+
+	for (var i = 0; i < parseInt(localStorage.drawn, 10); ++i) {
+		draw(false);
+	}
+
+	var counts = JSON.parse(localStorage.counts);
+	for (var i = 0; i < 9; ++i) {
+		document.getElementById('c' + i).innerHTML = counts[i];
+	}
+
+	var cards = document.querySelectorAll('.card');
+	var state = JSON.parse(localStorage.state);
+	for (var i = 0; i < cards.length; ++i) {
+		if (state[i][0]) {
+			cards[i].classList.add('discarded');
+		}
+
+		var tokens = cards[i].querySelectorAll('.token p');
+		for (var j = 0; j < state[i][1].length; ++j) {
+			tokens[j].innerHTML = state[i][1][j];
+		}
+	}
+
+	startPlay();
+}
+
+function startPlay() {
+	// remove form, show the card area
+	document.forms[0].style.display = 'none';
+	document.getElementById('play').style.display = 'block';
+	document.getElementById('etc').style.display = 'block';
+	// save before leaving the page
+	window.addEventListener("beforeunload", save);
+
+	// start the timer
+	start = new Date();
+	var elm = document.getElementById('timer');
+	setInterval(function() {
+		var elapsed = Math.floor((new Date() - start) / 1000 + prevtime);
+		elm.innerHTML = Math.floor(elapsed / 60) + ":" + ("0" + (elapsed % 60)).slice(-2);
+	}, 1000);
 }
 
 function buildDeck() {
@@ -355,13 +424,6 @@ function buildDeck() {
 		document.getElementById('c' + i).innerHTML = counts[i];
 	}
 
-	// remove form, show the card area
-	form.parentNode.removeChild(form);
-	document.getElementById('play').style.display = 'block';
-	document.getElementById('random').style.display = 'block';
-	// warn when leaving the page
-	window.addEventListener("beforeunload", leaveWarn);
-
 	// TODO verify deck with counts?
 
 	if (premythos) {
@@ -380,12 +442,9 @@ function buildDeck() {
 		draw(false);
 	}
 
-	var start = new Date();
-	var elm = document.getElementById('timer');
-	setInterval(function() {
-		var elapsed = Math.floor((new Date() - start) / 1000);
-		elm.innerHTML = Math.floor(elapsed / 60) + ":" + ("0" + (elapsed % 60)).slice(-2);
-	}, 1000);
+	save();
+
+	startPlay();
 }
 
 function hideShow() {
@@ -466,7 +525,7 @@ function draw(autodiscard) {
 
 	// The Storm
 	if (name === 'yelw-28-HB') {
-		card.innerHTML = '<button type="button" class="action" onclick="storm()" id="storm">Draw a <span class="rumor">Rumor</span> Mythos card from the game box.</button>';
+		card.innerHTML = '<button type="button" class="action" onclick="storm()" id="storm">Draw a <span class="rumor">Rumor</span> Mythos card.</button>';
 	}
 
 
@@ -480,8 +539,7 @@ function draw(autodiscard) {
 
 	if (drawn == deck.length) {
 		document.getElementById('draw').disabled = "disabled";
-		// safe to navigate away
-		window.removeEventListener("beforeunload", leaveWarn);
+		localStorage.save_version = -1; // intentionally invalid, to clear save
 	}
 
 	return true;
@@ -624,4 +682,8 @@ window.onload = function() {
 
 	methodChange(document.getElementById("method"));
 	customPerc();
+
+	if (parseInt(localStorage.save_version, 10) === save_version) {
+		load();
+	}
 }
