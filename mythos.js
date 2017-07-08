@@ -1,5 +1,7 @@
 'use strict';
 
+// TODO add cookies to store game state
+
 // count array elements with a certain property
 Array.prototype.count = function(fun) {
 	var c = 0;
