@@ -32,24 +32,29 @@ function loseToken(arrow) {
 	var count = parseInt(p.innerHTML, 10);
 	if (count === 0) return;
 	p.innerHTML = count - 1;
+	save();
 }
 function addToken(arrow) {
 	var p = arrow.previousSibling;
 	var count = parseInt(p.innerHTML, 10);
 	p.innerHTML = count + 1;
+	save();
 }
 
 function hide(x) {
 	var card = x.parentNode;
 	card.classList.add('discarded');
+	save();
 }
 
+// check if we can show the "Build" button
 function tryShowBuild() {
 	var sao = document.getElementById("ao").value !== "";
 	var sdb = document.getElementById("method").value !== "";
 	document.getElementById("build").style.display = sao && sdb ? 'block' : 'none';
 }
 
+// change the deck building description
 function methodChange(select) {
 	var descs = document.getElementsByClassName('desc');
 	for (var i = 0; i < descs.length; ++i) descs[i].style.display = 'none';
@@ -296,7 +301,7 @@ function load() {
 	prevtime = parseFloat(localStorage.prevtime);
 
 	for (var i = 0; i < parseInt(localStorage.drawn, 10); ++i) {
-		draw(false);
+		draw(false, false);
 	}
 
 	var counts = JSON.parse(localStorage.counts);
@@ -325,8 +330,6 @@ function startPlay() {
 	document.forms[0].style.display = 'none';
 	document.getElementById('play').style.display = 'block';
 	document.getElementById('etc').style.display = 'block';
-	// save before leaving the page
-	window.addEventListener("beforeunload", save);
 
 	// start the timer
 	start = new Date();
@@ -430,7 +433,7 @@ function buildDeck() {
 		deck.push(premythos);
 
 		document.getElementById('c2').innerHTML = counts[2] + 1;
-		draw(false);
+		draw(false, false);
 
 		var cs = document.getElementsByClassName('card');
 		cs[cs.length - 1].querySelector('.eldritch p').innerHTML = precount;
@@ -439,11 +442,10 @@ function buildDeck() {
 	// handle starting rumor
 	if (strtrum) {
 		document.getElementById('c2').innerHTML = counts[2] + 1;
-		draw(false);
+		draw(false, false);
 	}
 
 	save();
-
 	startPlay();
 }
 
@@ -465,7 +467,7 @@ function hasClues(str) {
 	return false;
 }
 
-function draw(autodiscard) {
+function draw(autodiscard, dosave) {
 	if (drawn == deck.length) return false;
 
 	var div = document.getElementById('cards');
@@ -542,6 +544,7 @@ function draw(autodiscard) {
 		localStorage.save_version = -1; // intentionally invalid, to clear save
 	}
 
+	if (dosave === undefined || dosave === true) save();
 	return true;
 }
 
@@ -589,15 +592,18 @@ function eibon() {
 	shuffleDeck([green, yellw]);
 
 	// discard three
-	for (var i = 0; i < 3; ++i) if (draw(false)) discardTop();
+	for (var i = 0; i < 3; ++i) if (draw(false, false)) discardTop();
+	save();
 }
 
 function lostTime() {
 	if (!window.confirm("Are you sure? This cannot be undone.")) return;
 
-	if (draw(false)) discardTop();
+	if (draw(false, false)) discardTop();
 
 	shuffleDeck();
+
+	save();
 }
 
 function storm() {
@@ -631,7 +637,6 @@ function newgame() {
 	document.forms[0].style.display = 'block';
 	document.getElementById('play').style.display = 'none';
 	document.getElementById('etc').style.display = 'none';
-	window.removeEventListener("beforeunload", save);
 
 	// remove previous cards
 	var cards = document.getElementById('cards');
