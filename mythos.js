@@ -335,6 +335,8 @@ function startPlay() {
 	start = new Date();
 	var elm = document.getElementById('timer');
 	setInterval(function() {
+		// TODO still sometimes shows fucking NaN, maybe when immediately saving/loading?
+		if (isNaN(prevtime)) prevtime = 0;
 		var elapsed = Math.floor((new Date() - start) / 1000 + prevtime);
 		elm.innerHTML = Math.floor(elapsed / 60) + ":" + ("0" + (elapsed % 60)).slice(-2);
 	}, 1000);
