@@ -1,7 +1,5 @@
 'use strict';
 
-// TODO add cookies to store game state
-
 // count array elements with a certain property
 Array.prototype.count = function(fun) {
 	var c = 0;
@@ -265,7 +263,7 @@ function customBuild(avail, counts, strtrum, desc) {
 var drawn = 0; // how many cards have been drawn
 var deck; // cards in Mythos deck
 var avail; // available cards (for adding later)
-var start; // game start time
+var start = undefined; // game start time
 var prevtime = 0; // elapsed time from previous session
 var save_version = 1; // to avoid conflicts in save info
 
@@ -273,7 +271,7 @@ function save() {
 	localStorage.drawn = drawn;
 	localStorage.deck = JSON.stringify(deck);
 	localStorage.avail = JSON.stringify(avail);
-	localStorage.prevtime = prevtime + (new Date() - start) / 1000;
+	localStorage.prevtime = start ? prevtime + (new Date() - start) / 1000 : prevtime;
 	localStorage.save_version = save_version;
 
 	// store stage counts
@@ -333,12 +331,6 @@ function startPlay() {
 
 	// start the timer
 	start = new Date();
-	var elm = document.getElementById('timer');
-	setInterval(function() {
-		if (start === undefined) return;
-		var elapsed = Math.floor((new Date() - start) / 1000 + prevtime);
-		elm.innerHTML = Math.floor(elapsed / 60) + ":" + ("0" + (elapsed % 60)).slice(-2);
-	}, 1000);
 }
 
 function buildDeck() {
@@ -714,6 +706,13 @@ window.onload = function() {
 
 	methodChange(document.getElementById("method"));
 	customPerc();
+
+	var elm = document.getElementById('timer');
+	setInterval(function() {
+		if (start === undefined) return;
+		var elapsed = Math.floor((new Date() - start) / 1000 + prevtime);
+		elm.innerHTML = Math.floor(elapsed / 60) + ":" + ("0" + (elapsed % 60)).slice(-2);
+	}, 1000);
 
 	if (parseInt(localStorage.save_version, 10) === save_version) {
 		load();
