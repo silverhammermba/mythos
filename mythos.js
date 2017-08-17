@@ -684,7 +684,7 @@ var ancient_ones = {
 	'Nephren-Ka':               [0, 2, 2, 1, 3, 0, 3, 4, 0],
 	'Cthulhu':                  [0, 2, 2, 1, 3, 0, 3, 4, 0],
 	'Hastur':                   [0, 2, 2, 2, 3, 0, 3, 5, 0],
-	'Syzygy':                   [0, 2, 2, 3, 3, 0, 5, 5, 0],
+	'Syzygy':                   [0, 2, 2, 3, 3, 0, 3, 5, 0],
 	'Ithaqua':                  [0, 2, 2, 4, 2, 0, 2, 4, 0],
 	'Yig':                      [1, 2, 1, 2, 3, 1, 2, 4, 0],
 	'Azathoth':                 [1, 2, 1, 2, 3, 1, 2, 4, 0],
@@ -695,6 +695,7 @@ var ancient_ones = {
 };
 
 window.onload = function() {
+	// populate the Ancient One dropdown
 	var select = document.getElementById("ao");
 	var names = Object.keys(ancient_ones).sort();
 	for (var i = 0; i < names.length; ++i) {
@@ -704,9 +705,11 @@ window.onload = function() {
 		select.appendChild(opt);
 	}
 
+	// set initial description/display for deck building method
 	methodChange(document.getElementById("method"));
 	customPerc();
 
+	// set up the game timer
 	var elm = document.getElementById('timer');
 	setInterval(function() {
 		if (start === undefined) return;
@@ -714,6 +717,7 @@ window.onload = function() {
 		elm.innerHTML = Math.floor(elapsed / 60) + ":" + ("0" + (elapsed % 60)).slice(-2);
 	}, 1000);
 
+	// load previous game, if present
 	if (parseInt(localStorage.save_version, 10) === save_version) {
 		load();
 	}
