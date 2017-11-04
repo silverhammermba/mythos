@@ -19,6 +19,7 @@ Array.prototype.shuffle = function() {
 	return this;
 };
 
+// filter an array by a regex or regex pattern
 Array.prototype.filterReg = function(pat) {
 	if (!(pat instanceof RegExp)) pat = new RegExp(pat);
 	return this.filter(function(x) { return x.match(pat); });
@@ -101,6 +102,9 @@ function randBuild(avail, counts) {
 	return d;
 }
 
+/* if we ever don't have enough cards, it's because we're doing hard/easy-only.
+ * this displays a message warning that we had to add some normal cards
+ */
 function checkNormal(cards) {
 	var num = cards.count(function(card) { return card.match(/-N/); });
 	if (num > 0) {
@@ -125,6 +129,7 @@ function stagedBuild(avail, counts, strtrum) {
 
 	var gren = hard.filterReg(/^gren/);
 	var yelw = hard.filterReg(/^yelw/);
+	var blue = hard.filterReg(/^blue/);
 
 	var d = [];
 
@@ -132,6 +137,7 @@ function stagedBuild(avail, counts, strtrum) {
 	var stage = [];
 	for (var j = 0; j < counts[6]; ++j) stage.push(gren.pop());
 	for (var j = 0; j < counts[7]; ++j) stage.push(yelw.pop());
+	for (var j = 0; j < counts[8]; ++j) stage.push(blue.pop());
 	d = d.concat(stage.shuffle());
 
 	var hard_rumors = document.getElementById('rudf').checked;
@@ -139,7 +145,7 @@ function stagedBuild(avail, counts, strtrum) {
 	// second stage
 	gren = normal.filterReg(/^gren/);
 	yelw = normal.filterReg(/^yelw/);
-	var blue = (hard_rumors ? hard : normal).filterReg(/^blue/);
+	blue = (hard_rumors ? hard : normal).filterReg(/^blue/);
 
 	stage = [];
 	for (var j = 0; j < counts[3]; ++j) stage.push(gren.pop());
@@ -201,6 +207,7 @@ function customBuild(avail, counts, strtrum, desc) {
 		var numn = Math.round(total * normal);
 		var numh = Math.round(total * hard);
 
+		// if rounding caused us to have an extra card
 		if (nume + numn + numh === total + 1) {
 			var reme = normal + hard;
 			var remn = hard + easy;
@@ -216,6 +223,7 @@ function customBuild(avail, counts, strtrum, desc) {
 			remn /= ttot;
 			remh /= ttot; // XXX technically unneeded, but whatevs
 
+			// remove the extra card randomly, with probability proportional to the original distribution
 			var r = Math.random();
 			if (r < reme) {
 				--nume;
@@ -225,8 +233,12 @@ function customBuild(avail, counts, strtrum, desc) {
 				--numh;
 			}
 
+			// XXX shouldn't happen, that means we got a 0 probability result
 			if (nume < 0 || numn < 0 || numh < 0) console.log("custom build failed!", total, easy, normal, hard);
-		} else if (nume + numn + numh === total - 1) {
+		}
+		// if rounding caused us to need another card
+		else if (nume + numn + numh === total - 1) {
+			// randomly add the card based on the original distribution
 			var r = Math.random();
 			if (r < easy) {
 				++nume;
@@ -235,6 +247,7 @@ function customBuild(avail, counts, strtrum, desc) {
 			} else {
 				++numh;
 			}
+		// XXX shouldn't get here, rounding should only ever be off by one
 		} else if (nume + numn + numh !== total) {
 			console.log("custom build failed!", total, easy, normal, hard);
 		}
@@ -691,7 +704,8 @@ var ancient_ones = {
 	'Shub-Niggurath':           [1, 2, 1, 3, 2, 1, 2, 4, 0],
 	'Atlach-Nacha':             [1, 2, 1, 3, 2, 1, 2, 4, 0],
 	'Abhoth':                   [1, 2, 1, 3, 2, 1, 2, 4, 0],
-	'Rise of the Elder Things': [2, 2, 1, 3, 3, 1, 4, 4, 0]
+	'Rise of the Elder Things': [2, 2, 1, 3, 3, 1, 4, 4, 0],
+	"Shudde M'ell":             [0, 2, 2, 4, 2, 0, 2, 4, 0]
 };
 
 window.onload = function() {
