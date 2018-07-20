@@ -531,6 +531,11 @@ function draw(autodiscard, dosave) {
 		card.innerHTML = html;
 	}
 
+	// Unimaginable Horror
+	if (name === 'yelw-08-HP') {
+		card.innerHTML = '<button type="button" class="action" onclick="unimaginable()" id="unimaginable">Shuffle and draw a Mythos card.</button>';
+	}
+
 	// The Storm
 	if (name === 'yelw-28-HB') {
 		card.innerHTML = '<button type="button" class="action" onclick="storm()" id="storm">Draw a <span class="rumor">Rumor</span> Mythos card.</button>';
@@ -609,6 +614,16 @@ function lostTime() {
 	shuffleDeck();
 
 	save();
+}
+
+function unimaginable() {
+	if (!window.confirm("Are you sure? This cannot be undone.")) return;
+
+	document.getElementById('unimaginable').disabled = "disabled";
+
+	shuffleDeck();
+
+	draw(true);
 }
 
 function storm() {
