@@ -473,6 +473,7 @@ function hasClues(str) {
 	return false;
 }
 
+// TODO if autodiscard, should double check if any previous cards should be discarded
 function draw(autodiscard, dosave) {
 	if (drawn == deck.length) return false;
 
@@ -539,6 +540,11 @@ function draw(autodiscard, dosave) {
 	// The Storm
 	if (name === 'yelw-28-HB') {
 		card.innerHTML = '<button type="button" class="action" onclick="storm()" id="storm">Draw a <span class="rumor">Rumor</span> Mythos card.</button>';
+	}
+
+	// Abandon Hope
+	if (name === 'yelw-72-HS') {
+		card.innerHTML = '<button type="button" class="action" onclick="abandon()" id="abandon">Draw 3 yellow Mythos cards from the game box.</button>';
 	}
 
 	// add the card
@@ -640,6 +646,25 @@ function storm() {
 	cell.innerHTML = parseInt(cell.innerHTML, 10) + 1;
 
 	draw(true);
+}
+
+function abandon() {
+	if (!window.confirm("Are you sure? This cannot be undone.")) return;
+
+	document.getElementById('abandon').disabled = "disabled";
+
+	var yellows = avail.filter(function(card) { return card.match(/^yelw/) && deck.indexOf(card) < 0; })
+	yellows = yellows.slice(yellows.length - 3, yellows.length);
+	// TODO check for not enough cards?
+
+	deck.splice(deck.length - drawn, 0, yellows[0], yellows[1], yellows[2]);
+
+	var cell = document.getElementById('c1');
+	cell.innerHTML = parseInt(cell.innerHTML, 10) + 3;
+
+	draw(false);
+	draw(false);
+	draw(false);
 }
 
 function newgame() {
