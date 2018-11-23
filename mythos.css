@@ -68,6 +68,15 @@ td.blue {
 }
 #cards.showcards .discarded {
 	display: inline-block;
+	opacity: 0.6;
+}
+
+#cards + #hideshow::before {
+	content: 'Show '
+}
+
+#cards.showcards + #hideshow::before {
+	content: 'Hide '
 }
 
 .card {
