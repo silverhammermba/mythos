@@ -504,9 +504,15 @@ function draw(autodiscard, dosave) {
 	}
 
 	// create card
+	var card_container = document.createElement('div');
+	card_container.classList.add('cardContainer');
+
+
 	var card = document.createElement('div');
 	card.classList.add('card');
 	card.style.backgroundImage = "url('cards/" + name + ".jpg')";
+
+	card_container.appendChild(card);
 
 	var count = tokenCount(card.style.backgroundImage);
 	if (count !== null) {
@@ -548,7 +554,7 @@ function draw(autodiscard, dosave) {
 	}
 
 	// add the card
-	div.insertBefore(card, div.firstChild);
+	div.insertBefore(card_container, div.firstChild);
 
 	// if the previously drawn card doesn't have a close button, remove it
 	if (autodiscard && card.nextSibling && !card.nextSibling.getElementsByClassName('close').length) {
