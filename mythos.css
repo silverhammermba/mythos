@@ -176,6 +176,6 @@ td.blue {
 	font-size: 9pt;
 }
 
-.card.discarded .close {
+.discarded .card .close {
 	display: none;
 }

@@ -41,8 +41,8 @@ function addToken(arrow) {
 }
 
 function hide(x) {
-	var card = x.parentNode;
-	card.classList.add('discarded');
+	var container = x.parentNode.parentNode;
+	container.classList.add('discarded');
 	save();
 }
 
@@ -298,7 +298,7 @@ function save() {
 	var state = [];
 	var cards = document.querySelectorAll('.card');
 	for (var i = 0; i < cards.length; ++i) {
-		var discarded = cards[i].classList.contains('discarded');
+		var discarded = cards[i].parentNode.classList.contains('discarded');
 		var tokens = Array.from(cards[i].querySelectorAll('.token p')).map(function(p) { return parseInt(p.innerHTML, 10); });
 		state.push([discarded, tokens]);
 	}
@@ -324,7 +324,8 @@ function load() {
 	var state = JSON.parse(localStorage.state);
 	for (var i = 0; i < cards.length; ++i) {
 		if (state[i][0]) {
-			cards[i].classList.add('discarded');
+			console.log(cards[i].parentNode.classList);
+			cards[i].parentNode.classList.add('discarded');
 		}
 
 		var tokens = cards[i].querySelectorAll('.token p');
@@ -507,7 +508,6 @@ function draw(autodiscard, dosave) {
 	var card_container = document.createElement('div');
 	card_container.classList.add('cardContainer');
 
-
 	var card = document.createElement('div');
 	card.classList.add('card');
 	card.style.backgroundImage = "url('cards/" + name + ".jpg')";
@@ -557,8 +557,8 @@ function draw(autodiscard, dosave) {
 	div.insertBefore(card_container, div.firstChild);
 
 	// if the previously drawn card doesn't have a close button, remove it
-	if (autodiscard && card.nextSibling && !card.nextSibling.getElementsByClassName('close').length) {
-		card.nextSibling.classList.add('discarded');
+	if (autodiscard && card_container.nextSibling && !card_container.nextSibling.firstChild.getElementsByClassName('close').length) {
+		card_container.nextSibling.classList.add('discarded');
 	}
 
 	if (drawn == deck.length) {
@@ -601,7 +601,7 @@ function shuffleDeck(add) {
 
 // discard the top card of the mythos deck
 function discardTop() {
-	document.getElementsByClassName('card')[0].classList.add('discarded');
+	document.getElementsByClassName('cardContainer')[0].classList.add('discarded');
 }
 
 function eibon() {
