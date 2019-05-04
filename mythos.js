@@ -343,6 +343,15 @@ function startPlay() {
 	document.getElementById('play').style.display = 'block';
 	document.getElementById('etc').style.display = 'block';
 
+	var expansions = [];
+	let checkboxes = document.querySelectorAll('#expansions input');
+	for (var i = 0; i < checkboxes.length; ++i) {
+		if (checkboxes[i].checked) {
+			expansions.push(checkboxes[i].id);
+		}
+	}
+	localStorage.expansions = expansions;
+
 	// start the timer
 	start = new Date();
 }
@@ -799,6 +808,15 @@ window.onload = function() {
 		var elapsed = Math.floor((new Date() - start) / 1000 + prevtime);
 		elm.innerHTML = Math.floor(elapsed / 60) + ":" + ("0" + (elapsed % 60)).slice(-2);
 	}, 1000);
+
+	if (Array.isArray(localStorage.expansions)) {
+		for (var i = 0; i < localStorage.expansions; ++i) {
+			let checkbox = document.querySelector('#expansions #' + localStorage.expansions[i]);
+			if (checkbox !== null) {
+				checkbox.checked = true;
+			}
+		}
+	}
 
 	// load previous game, if present
 	if (parseInt(localStorage.save_version, 10) === save_version) {
