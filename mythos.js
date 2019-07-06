@@ -46,10 +46,12 @@ function hide(x) {
 	save();
 }
 
-// check if we can show the "Build" button
+// check if we can show the "Build" button, also hide/show the custom deck
 function tryShowBuild() {
-	var sao = document.getElementById("ao").value !== "";
+	var ao = document.getElementById("ao").value;
+	var sao = ao !== "";
 	var sdb = document.getElementById("method").value !== "";
+	document.getElementById("custom-counts").style.display = ao === "Custom" ? 'table' : 'none';
 	document.getElementById("build").style.display = sao && sdb ? 'block' : 'none';
 }
 
@@ -356,6 +358,43 @@ function startPlay() {
 	start = new Date();
 }
 
+// update custom counts, return true/false if build is okay to proceed
+function updateCustomCounts(available) {
+	var ao = document.getElementById("ao").value;
+
+	if (ao !== "Custom") return true;
+
+	var inputs = [].slice.call(document.querySelectorAll('#custom-counts input'));
+	var counts = inputs.map(i => parseInt(i.value, 10));
+	var total = counts.reduce((a, x) => a + x, 0);
+
+	if (total === 0) return false;
+
+	var avail_gren = available.filterReg('^gren').length;
+	var avail_yelw = available.filterReg('^yelw').length;
+	var avail_blue = available.filterReg('^blue').length;
+	var count_gren = counts[0] + counts[3] + counts[6];
+	var count_yelw = counts[1] + counts[4] + counts[7];
+	var count_blue = counts[2] + counts[5] + counts[8];
+
+	if (avail_gren < count_gren) {
+		alert("Not enough green mythos cards available for custom deck (" + avail_gren + "<" + count_gren + ").");
+		return false;
+	}
+	if (avail_yelw < count_yelw) {
+		alert("Not enough yellow mythos cards available for custom deck (" + avail_yelw + "<" + count_yelw + ").");
+		return false;
+	}
+	if (avail_blue < count_blue) {
+		alert("Not enough blue mythos cards available for custom deck (" + avail_blue + "<" + count_blue + ").");
+		return false;
+	}
+
+	ancient_ones[ao] = counts;
+
+	return true;
+}
+
 function buildDeck() {
 	var form = document.forms[0];
 	var desc = document.getElementById('desc');
@@ -392,6 +431,10 @@ function buildDeck() {
 				precount = 6;
 			}
 			break;
+	}
+
+	if (!updateCustomCounts(avail)) {
+		return;
 	}
 
 	var counts = ancient_ones[form['ao'].value];
@@ -790,6 +833,7 @@ window.onload = function() {
 	// populate the Ancient One dropdown
 	var select = document.getElementById("ao");
 	var names = Object.keys(ancient_ones).sort();
+	names.push("Custom");
 	for (var i = 0; i < names.length; ++i) {
 		var opt = document.createElement('option');
 		opt.value = names[i];

@@ -63,6 +63,18 @@ td.blue {
 	background: #3372b5;
 }
 
+#custom-counts {
+	display: none;
+}
+
+#custom-counts input {
+	background: transparent;
+	color: white;
+	border: 0;
+	max-width: 3em;
+	font-size: 14pt;
+}
+
 #cards .discarded {
 	display: none;
 }
