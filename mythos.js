@@ -365,7 +365,7 @@ function updateCustomCounts(available) {
 	if (ao !== "Custom") return true;
 
 	var inputs = [].slice.call(document.querySelectorAll('#custom-counts input'));
-	var counts = inputs.map(i => parseInt(i.value, 10));
+	var counts = inputs.map(i => parseInt(i.value, 10) || 0);
 	var total = counts.reduce((a, x) => a + x, 0);
 
 	if (total === 0) return false;
