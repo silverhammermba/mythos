@@ -706,6 +706,12 @@ function storm() {
 	draw(true);
 }
 
+function arbiterOfFate() {
+	if (!window.confirm("Are you sure? This cannot be undone.")) return;
+
+	shuffleDeck();
+}
+
 function abandon() {
 	if (!window.confirm("Are you sure? This cannot be undone.")) return;
 
