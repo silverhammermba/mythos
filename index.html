@@ -190,10 +190,13 @@
 			</section>
 			<section id="cards"></section>
 			<button type="button" id="hideshow" onclick="hideShow()">discarded cards</button>
-			<button type="button" id="time" class="special" onclick="lostTime()">Lost to Time</button>
-			<button type="button" id="eibon" class="special" onclick="eibon()">Pact with Eibon</button>
-			<button type="button" id="arbiter" class="special" onclick="arbiterOfFate()">Arbiter of Fate</button>
-			<button type="button" id="evil" onclick="evilOfOld()">Evil of Old</button>
+			<div class="expD expM expN expR hidden">
+				Other effects:
+				<button type="button" id="time" class="expD hidden special" onclick="lostTime()">Lost to Time</button>
+				<button type="button" id="eibon" class="expM hidden special" onclick="eibon()">Pact with Eibon</button>
+				<button type="button" id="arbiter" class="expN hidden special" onclick="arbiterOfFate()">Arbiter of Fate</button>
+				<span class="expR hidden"><button type="button" id="evil" class="expN hidden" onclick="evilOfOld()">Evil of Old</button></span>
+			</div>
 		</div>
 		<section>
 			<footer>
