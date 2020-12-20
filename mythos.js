@@ -712,11 +712,19 @@ function arbiterOfFate() {
 	shuffleDeck();
 }
 
+function evilOfOld() {
+	draw3YellowFromBox();
+}
+
 function abandon() {
 	if (!window.confirm("Are you sure? This cannot be undone.")) return;
 
 	document.getElementById('abandon').disabled = "disabled";
 
+	draw3YellowFromBox();
+}
+
+function draw3YellowFromBox() {
 	var yellows = avail.filter(function(card) { return card.match(/^yelw/) && deck.indexOf(card) < 0; })
 	yellows = yellows.slice(yellows.length - 3, yellows.length);
 	// TODO check for not enough cards?
