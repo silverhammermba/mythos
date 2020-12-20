@@ -390,7 +390,7 @@ function updateCustomCounts(available) {
 		return false;
 	}
 
-	ancient_ones[ao] = counts;
+	ancient_ones[ao][1] = counts;
 
 	return true;
 }
@@ -437,7 +437,7 @@ function buildDeck() {
 		return;
 	}
 
-	var counts = ancient_ones[form['ao'].value];
+	var counts = ancient_ones[form['ao'].value][1];
 	var strtrum = form['startingrumor'].checked;
 
 	switch (form['method'].value) {
@@ -764,6 +764,19 @@ function newgame() {
 	document.getElementById('draw').disabled = "";
 }
 
+function toggleExpansion(checkbox) {
+	var elements = document.querySelectorAll('.exp' + checkbox.value);
+
+	console.log(elements);
+	for (var i = 0; i < elements.length; ++i) {
+		if (checkbox.checked) {
+			elements[i].classList.remove("hidden");
+		} else {
+			elements[i].classList.add("hidden");
+		}
+	}
+}
+
 /* card format is
  * COLOR-ID-DIFFICULTY EXPANSION ELDRITCH CLUES
  * with spaces removed
@@ -824,37 +837,26 @@ var cards = [
 
 // most you need is 10 green, 11 yellow, 3 blue (for starting rumor)
 var ancient_ones = {
-                             // G1 Y1 B1 G2 Y2 B2 G3 Y3 B3
-	'Yog-Sothoth':              [0, 2, 1, 2, 3, 1, 3, 4, 0],
-	'Hypnos':                   [0, 2, 1, 2, 3, 1, 3, 4, 0],
-	'Nephren-Ka':               [0, 2, 2, 1, 3, 0, 3, 4, 0],
-	'Cthulhu':                  [0, 2, 2, 1, 3, 0, 3, 4, 0],
-	'Hastur':                   [0, 2, 2, 2, 3, 0, 3, 5, 0],
-	'Syzygy':                   [0, 2, 2, 3, 3, 0, 3, 5, 0],
-	'Ithaqua':                  [0, 2, 2, 4, 2, 0, 2, 4, 0],
-	'Yig':                      [1, 2, 1, 2, 3, 1, 2, 4, 0],
-	'Azathoth':                 [1, 2, 1, 2, 3, 1, 2, 4, 0],
-	'Shub-Niggurath':           [1, 2, 1, 3, 2, 1, 2, 4, 0],
-	'Atlach-Nacha':             [1, 2, 1, 3, 2, 1, 2, 4, 0],
-	'Abhoth':                   [1, 2, 1, 3, 2, 1, 2, 4, 0],
-	'Rise of the Elder Things': [2, 2, 1, 3, 3, 1, 4, 4, 0],
-	"Shudde M'ell":             [0, 2, 2, 4, 2, 0, 2, 4, 0],
-	"Antediluvium":             [1, 2, 1, 2, 3, 1, 2, 4, 0],
-	"Nyarlathotep":             [1, 2, 1, 2, 3, 1, 2, 4, 0]
+                           // expansion G1 Y1 B1 G2 Y2 B2 G3 Y3 B3
+	'Yog-Sothoth':              [null, [0, 2, 1, 2, 3, 1, 3, 4, 0]],
+	'Hypnos':                   [ "D", [0, 2, 1, 2, 3, 1, 3, 4, 0]],
+	'Nephren-Ka':               [ "P", [0, 2, 2, 1, 3, 0, 3, 4, 0]],
+	'Cthulhu':                  [null, [0, 2, 2, 1, 3, 0, 3, 4, 0]],
+	'Hastur':                   [ "C", [0, 2, 2, 2, 3, 0, 3, 5, 0]],
+	'Syzygy':                   [ "R", [0, 2, 2, 3, 3, 0, 3, 5, 0]],
+	'Ithaqua':                  [ "M", [0, 2, 2, 4, 2, 0, 2, 4, 0]],
+	'Yig':                      [ "L", [1, 2, 1, 2, 3, 1, 2, 4, 0]],
+	'Azathoth':                 [null, [1, 2, 1, 2, 3, 1, 2, 4, 0]],
+	'Shub-Niggurath':           [null, [1, 2, 1, 3, 2, 1, 2, 4, 0]],
+	'Atlach-Nacha':             [ "D", [1, 2, 1, 3, 2, 1, 2, 4, 0]],
+	'Abhoth':                   [ "P", [1, 2, 1, 3, 2, 1, 2, 4, 0]],
+	'Rise of the Elder Things': [ "M", [2, 2, 1, 3, 3, 1, 4, 4, 0]],
+	"Shudde M'ell":             [ "S", [0, 2, 2, 4, 2, 0, 2, 4, 0]],
+	"Antediluvium":             [ "N", [1, 2, 1, 2, 3, 1, 2, 4, 0]],
+	"Nyarlathotep":             [ "N", [1, 2, 1, 2, 3, 1, 2, 4, 0]]
 };
 
 window.onload = function() {
-	// populate the Ancient One dropdown
-	var select = document.getElementById("ao");
-	var names = Object.keys(ancient_ones).sort();
-	names.push("Custom");
-	for (var i = 0; i < names.length; ++i) {
-		var opt = document.createElement('option');
-		opt.value = names[i];
-		opt.innerHTML = names[i];
-		select.appendChild(opt);
-	}
-
 	// set initial description/display for deck building method
 	methodChange(document.getElementById("method"));
 	customPerc();
@@ -874,6 +876,12 @@ window.onload = function() {
 				checkbox.checked = true;
 			}
 		}
+	}
+
+	// set initial expansion state
+	let expansions = document.querySelectorAll('#expansions input');
+	for (var i = 0; i < expansions.length; ++i) {
+		toggleExpansion(expansions[i]);
 	}
 
 	// load previous game, if present

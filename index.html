@@ -32,42 +32,59 @@
 			<fieldset id="expansions">
 				<legend>Expansions</legend>
 				<div>
-					<input type="checkbox" id="fl" name="expansion" value="L">
+					<input type="checkbox" id="fl" name="expansion" value="L" onchange="toggleExpansion(this)">
 					<label for="fl">Forsaken Lore</label>
 				</div>
 				<div>
-					<input type="checkbox" id="mom" name="expansion" value="M">
+					<input type="checkbox" id="mom" name="expansion" value="M" onchange="toggleExpansion(this)">
 					<label for="mom">Mountains of Madness</label>
 				</div>
 				<div>
-					<input type="checkbox" id="sr" name="expansion" value="R">
+					<input type="checkbox" id="sr" name="expansion" value="R" onchange="toggleExpansion(this)">
 					<label for="sr">Strange Remnants</label>
 				</div>
 				<div>
-					<input type="checkbox" id="utp" name="expansion" value="P">
+					<input type="checkbox" id="utp" name="expansion" value="P" onchange="toggleExpansion(this)">
 					<label for="utp">Under the Pyramids</label>
 				</div>
 				<div>
-					<input type="checkbox" id="soc" name="expansion" value="C">
+					<input type="checkbox" id="soc" name="expansion" value="C" onchange="toggleExpansion(this)">
 					<label for="soc">Signs of Carcosa</label>
 				</div>
 				<div>
-					<input type="checkbox" id="td" name="expansion" value="D">
+					<input type="checkbox" id="td" name="expansion" value="D" onchange="toggleExpansion(this)">
 					<label for="td">The Dreamlands</label>
 				</div>
 				<div>
 					<!-- S for Shudde M'ell -->
-					<input type="checkbox" id="cir" name="expansion" value="S">
+					<input type="checkbox" id="cir" name="expansion" value="S" onchange="toggleExpansion(this)">
 					<label for="cir">Cities in Ruin</label>
 				</div>
 				<div>
-					<input type="checkbox" id="nyar" name="expansion" value="N">
+					<input type="checkbox" id="nyar" name="expansion" value="N" onchange="toggleExpansion(this)">
 					<label for="nyar">Masks of Nyarlathotep</label>
 				</div>
 			</fieldset>
 
 			<select id="ao" onchange="tryShowBuild()">
 				<option style="display:none" selected="selected" value="">Ancient One</option>
+				<option value="Abhoth" class="expP hidden">Abhoth</option>
+				<option value="Antediluvium" class="expN hidden">Antediluvium</option>
+				<option value="Atlach-Nacha" class="expD hidden">Atlach-Nacha</option>
+				<option value="Azathoth">Azathoth</option>
+				<option value="Cthulhu">Cthulhu</option>
+				<option value="Hastur" class="expC hidden">Hastur</option>
+				<option value="Hypnos" class="expD hidden">Hypnos</option>
+				<option value="Ithaqua" class="expM hidden">Ithaqua</option>
+				<option value="Nephren-Ka" class="expP hidden">Nephren-Ka</option>
+				<option value="Nyarlathotep" class="expN hidden">Nyarlathotep</option>
+				<option value="Rise of the Elder Things" class="expM hidden">Rise of the Elder Things</option>
+				<option value="Shub-Niggurath">Shub-Niggurath</option>
+				<option value="Shudde M'ell" class="expS hidden">Shudde M'ell</option>
+				<option value="Syzygy" class="expR hidden">Syzygy</option>
+				<option value="Yig" class="expL hidden">Yig</option>
+				<option value="Yog-Sothoth">Yog-Sothoth</option>
+				<option value="Custom">Custom</option></select>
 			</select>
 
 			<select id="method" onchange="methodChange(this)">
