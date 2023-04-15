@@ -8,7 +8,7 @@ function AncientOneSelect({ ancientOnes, selected, onChange }: AncientOneSelectP
   return (
     <div className="ancient-one-select-component">
       <label htmlFor="ao">
-        Ancient One
+        {'Ancient One '}
         <select id="ao" value={selected} onChange={(event) => onChange(event.currentTarget.value)}>
           {ancientOnes.map((ancientOne) => (
             <option
