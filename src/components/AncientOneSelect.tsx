@@ -18,6 +18,7 @@ function AncientOneSelect({ ancientOnes, selected, onChange }: AncientOneSelectP
               {ancientOne}
             </option>
           ))}
+          <option value="Custom">Custom</option>
         </select>
       </label>
     </div>

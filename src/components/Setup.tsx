@@ -16,6 +16,7 @@ function Setup() {
   const ancientOnes = content
     .filter((pack, index) => expansions[index])
     .flatMap((pack) => pack.ancientOnes)
+    .map((ao) => ao.name)
     .sort();
 
   return (
