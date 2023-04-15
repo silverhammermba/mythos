@@ -1,4 +1,9 @@
-export const difficulties = [
+export interface Difficulty {
+  name: string,
+  description: string | undefined,
+}
+
+export const difficulties: Difficulty[] = [
   { name: 'Normal', description: 'The normal Mythos setup. Expect the unexpected.' },
   { name: 'No Hard', description: 'All hard Mythos cards removed. Good for beginners.' },
   { name: 'No Easy', description: 'All easy Mythos cards removed. Good for experts.' },

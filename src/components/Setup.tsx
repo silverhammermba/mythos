@@ -3,6 +3,7 @@ import AncientOneSelect from './AncientOneSelect';
 import ExpansionSelect from './ExpansionSelect';
 import { packs } from '../content';
 import DeckCountSelect from './DeckCountSelect';
+import DifficultySelect from './DifficultySelect';
 
 function Setup() {
   const numExpansions = packs.length;
@@ -14,6 +15,7 @@ function Setup() {
 
   const [expansions, setExpansions] = useState(initialExpansionState);
   const [ancientOne, setAncientOne] = useState<string | undefined>(undefined);
+  const [difficulty, setDifficulty] = useState<string | undefined>(undefined);
   const [customDeckCount, setCustomDeckCount] = useState(initialCustomDeckCount);
 
   const ancientOnes = packs
@@ -51,6 +53,7 @@ function Setup() {
           selected={ancientOne}
           onChange={setAncientOne}
         />
+        <DifficultySelect selected={difficulty} onChange={setDifficulty} />
         <DeckCountSelect deckCount={customDeckCount} onChange={setCustomDeckCount} />
       </form>
     </div>

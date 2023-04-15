@@ -23,18 +23,20 @@ function DeckCountSelect({ deckCount, onChange }: DeckCountSelectProps) {
   return (
     <table className="deck-count-select-component">
       <caption>Custom Deck</caption>
-      {stages.map((stage) => (
-        <StageSelect
-          key={stage.name}
-          name={stage.name}
-          green={deckCount[stage.offset]}
-          yellow={deckCount[stage.offset + 1]}
-          blue={deckCount[stage.offset + 2]}
-          onChangeGreen={setDeckCount(stage.offset)}
-          onChangeYellow={setDeckCount(stage.offset + 1)}
-          onChangeBlue={setDeckCount(stage.offset + 2)}
-        />
-      ))}
+      <tbody>
+        {stages.map((stage) => (
+          <StageSelect
+            key={stage.name}
+            name={stage.name}
+            green={deckCount[stage.offset]}
+            yellow={deckCount[stage.offset + 1]}
+            blue={deckCount[stage.offset + 2]}
+            onChangeGreen={setDeckCount(stage.offset)}
+            onChangeYellow={setDeckCount(stage.offset + 1)}
+            onChangeBlue={setDeckCount(stage.offset + 2)}
+          />
+        ))}
+      </tbody>
     </table>
   );
 }

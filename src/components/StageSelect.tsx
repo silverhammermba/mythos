@@ -31,9 +31,11 @@ function StageSelect({
         :
       </th>
       {colors.map((color) => (
-        <td className={color.className}>
+        <td
+          className={color.className}
+          key={`${name}-${color.className}`}
+        >
           <input
-            key={`${name}-${color.className}`}
             type="number"
             min="0"
             max="99"
