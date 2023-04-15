@@ -1,30 +1,28 @@
 import { useState } from 'react';
 import ExpansionSelect from './ExpansionSelect';
+import content from '../content';
 
 function Setup() {
-  const expansions = [
-    { name: 'Forsaken Lore', abbr: 'L', state: useState(false) },
-    { name: 'Mountains of Madness', abbr: 'M', state: useState(false) },
-    { name: 'Strange Remnants', abbr: 'R', state: useState(false) },
-    { name: 'Under the Pyramids', abbr: 'P', state: useState(false) },
-    { name: 'Signs of Carcosa', abbr: 'C', state: useState(false) },
-    { name: 'The Dreamlands', abbr: 'D', state: useState(false) },
-    { name: 'Cities in Ruin', abbr: 'S', state: useState(false) },
-    { name: 'Masks of Nyarlathotep', abbr: 'N', state: useState(false) },
-  ];
+  const numExpansions = content.length;
+  const initialExpansionState = Array(numExpansions).fill(false);
+
+  const [expansionState, setExpansionState] = useState(initialExpansionState);
 
   return (
     <div className="setup-component">
       <form>
         <fieldset id="expansions">
           <legend>Expansions</legend>
-          {expansions.map((expansion) => (
+          {content.map((expansion, index) => (
             <ExpansionSelect
               key={expansion.name}
               name={expansion.name}
-              abbr={expansion.abbr}
-              selected={expansion.state[0]}
-              onChange={expansion.state[1]}
+              selected={expansionState[index]}
+              onChange={(selected) => setExpansionState((prev) => {
+                const newSelection = [...prev];
+                newSelection[index] = selected;
+                return newSelection;
+              })}
             />
           ))}
         </fieldset>
