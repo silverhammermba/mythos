@@ -5,9 +5,8 @@ interface NumberInputProps {
 }
 
 function NumberInput({ className, value, onChange }: NumberInputProps) {
-  // TODO: would be nice to force integer input, but it's hard to do that properly
-  // unfortunately firefox allows non-numeric input and treats such input as empty
-  // there does not seem to be an easy cross-platform fix
+  // N.B. firefox allows non-integer input and just reports it as empty
+  // so react can't validate this. but firefox will validate it when the form is submitted
   return (
     <td className={`number-input-component ${className}`}>
       <input
