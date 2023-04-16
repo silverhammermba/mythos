@@ -22,11 +22,13 @@ function Setup() {
   const [customDifficulty, setCustomDifficulty] = useState([1, 1, 1]);
 
   const customDeckCount = customDeckTmp.map((count) => {
-    const num = Number.parseInt(count, 10);
-    return Number.isNaN(num) ? 0 : Math.round(num);
+    if (count === '') return 0;
+    return Number.parseInt(count, 10);
   });
-  const customDeckValid = customDeckCount.every((count) => count >= 0)
-    && customDeckCount.find((count) => count > 0);
+  const customDeckValid = customDeckCount.every((count) => {
+    const valid = !Number.isNaN(count) && Number.isInteger(count) && count >= 0;
+    return valid;
+  }) && customDeckCount.find((count) => count > 0);
   const ancientOneValid = Boolean(ancientOne) && (ancientOne !== 'Custom' || customDeckValid);
 
   const startGame: React.FormEventHandler<HTMLFormElement> = (event) => {
