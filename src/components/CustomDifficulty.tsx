@@ -1,4 +1,4 @@
-import DifficultySlider from './DifficultySlider';
+import ProportionSlider from './ProportionSlider';
 
 interface CustomDifficultyProps {
   customDifficulty: number[],
@@ -33,9 +33,15 @@ function CustomDifficulty({ customDifficulty, setCustomDifficulty }: CustomDiffi
     <div className="custom-difficulty-component">
       <fieldset>
         <legend>Difficulty distribution</legend>
-        <DifficultySlider name="Easy" proportion={customDifficulty[0]} onChange={setProportion(0)} adjustedProportion={easy} />
-        <DifficultySlider name="Normal" proportion={customDifficulty[1]} onChange={setProportion(1)} adjustedProportion={normal} />
-        <DifficultySlider name="Hard" proportion={customDifficulty[2]} onChange={setProportion(2)} adjustedProportion={hard} />
+        <ProportionSlider proportion={customDifficulty[0]} onChange={setProportion(0)}>
+          {`${Math.floor(easy * 100)}% Easy`}
+        </ProportionSlider>
+        <ProportionSlider proportion={customDifficulty[1]} onChange={setProportion(1)}>
+          {`${Math.floor(normal * 100)}% Normal`}
+        </ProportionSlider>
+        <ProportionSlider proportion={customDifficulty[2]} onChange={setProportion(2)}>
+          {`${Math.floor(hard * 100)}% Hard`}
+        </ProportionSlider>
       </fieldset>
     </div>
   );

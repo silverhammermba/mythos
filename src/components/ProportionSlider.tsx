@@ -1,22 +1,20 @@
 import { useId } from 'react';
 
-interface DifficultySliderProps {
-  name: string,
+interface ProportionSliderProps {
   proportion: number,
   onChange: (selected: number) => void,
-  adjustedProportion: number,
+  children: string,
 }
 
-function DifficultySlider({
-  name,
+function ProportionSlider({
   proportion,
   onChange,
-  adjustedProportion,
-}: DifficultySliderProps) {
+  children,
+}: ProportionSliderProps) {
   const id = useId();
 
   return (
-    <div className="difficulty-slider-component">
+    <div className="proportion-slider-component">
       <label htmlFor={id}>
         <input
           type="range"
@@ -26,10 +24,10 @@ function DifficultySlider({
           value={proportion * 100}
           onChange={(event) => onChange(event.currentTarget.valueAsNumber / 100)}
         />
-        {` ${Math.floor(adjustedProportion * 100)}% ${name}`}
+        {` ${children}`}
       </label>
     </div>
   );
 }
 
-export default DifficultySlider;
+export default ProportionSlider;
