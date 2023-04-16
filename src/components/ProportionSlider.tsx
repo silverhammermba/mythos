@@ -1,16 +1,15 @@
-import { useId } from 'react';
+import { useId, PropsWithChildren } from 'react';
 
 interface ProportionSliderProps {
   proportion: number,
   onChange: (selected: number) => void,
-  children: string,
 }
 
 function ProportionSlider({
   proportion,
   onChange,
   children,
-}: ProportionSliderProps) {
+}: PropsWithChildren<ProportionSliderProps>) {
   const id = useId();
 
   return (
@@ -24,7 +23,7 @@ function ProportionSlider({
           value={proportion * 100}
           onChange={(event) => onChange(event.currentTarget.valueAsNumber / 100)}
         />
-        {` ${children}`}
+        {children}
       </label>
     </div>
   );

@@ -34,13 +34,13 @@ function CustomDifficulty({ customDifficulty, setCustomDifficulty }: CustomDiffi
       <fieldset>
         <legend>Difficulty distribution</legend>
         <ProportionSlider proportion={customDifficulty[0]} onChange={setProportion(0)}>
-          {`${Math.floor(easy * 100)}% Easy`}
+          {` ${Math.floor(easy * 100)}% Easy`}
         </ProportionSlider>
         <ProportionSlider proportion={customDifficulty[1]} onChange={setProportion(1)}>
-          {`${Math.floor(normal * 100)}% Normal`}
+          {` ${Math.floor(normal * 100)}% Normal`}
         </ProportionSlider>
         <ProportionSlider proportion={customDifficulty[2]} onChange={setProportion(2)}>
-          {`${Math.floor(hard * 100)}% Hard`}
+          {` ${Math.floor(hard * 100)}% Hard`}
         </ProportionSlider>
       </fieldset>
     </div>
