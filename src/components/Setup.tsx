@@ -1,53 +1,37 @@
 import { useState } from 'react';
+import { difficulties, packs } from '../content';
+import AllExpansionSelect from './AllExpansionSelect';
 import AncientOneSelect from './AncientOneSelect';
-import ExpansionSelect from './ExpansionSelect';
-import { packs } from '../content';
 import DeckCountSelect from './DeckCountSelect';
 import DifficultySelect from './DifficultySelect';
 
 function Setup() {
   const numExpansions = packs.length;
-  const initialExpansionState: boolean[] = Array(numExpansions).fill(false);
+  const initialPackState: boolean[] = Array(numExpansions).fill(false);
   // base pack is selected by default
-  initialExpansionState[0] = true;
+  initialPackState[0] = true;
 
   const initialCustomDeckCount = Array<number>(9).fill(0);
 
-  const [expansions, setExpansions] = useState(initialExpansionState);
-  const [ancientOne, setAncientOne] = useState<string | undefined>(undefined);
-  const [difficulty, setDifficulty] = useState<string | undefined>(undefined);
-  const [customDeckCount, setCustomDeckCount] = useState(initialCustomDeckCount);
+  const [enabledPacks, setEnabledPacks] = useState(initialPackState);
 
   const ancientOnes = packs
-    .filter((pack, index) => expansions[index])
+    .filter((pack, index) => enabledPacks[index])
     .flatMap((pack) => pack.ancientOnes)
     .map((ao) => ao.name)
     .sort();
 
+  const [ancientOne, setAncientOne] = useState(ancientOnes[0]);
+  const [difficulty, setDifficulty] = useState(difficulties[0].name);
+  const [customDeckCount, setCustomDeckCount] = useState(initialCustomDeckCount);
+
   return (
     <div className="setup-component">
       <form>
-        <fieldset id="expansions">
-          <legend>Expansions</legend>
-          {packs.map((pack, index) => {
-            if (index === 0) return null;
-            return (
-              <ExpansionSelect
-                key={pack.name}
-                name={pack.name}
-                selected={expansions[index]}
-                onChange={(selected: boolean) => {
-                  setExpansions((prev) => {
-                    const newSelection = [...prev];
-                    newSelection[index] = selected;
-                    newSelection[0] = true; // never deselect base set
-                    return newSelection;
-                  });
-                }}
-              />
-            );
-          })}
-        </fieldset>
+        <AllExpansionSelect
+          enabledPacks={enabledPacks}
+          setEnabledPacks={setEnabledPacks}
+        />
         <AncientOneSelect
           ancientOnes={ancientOnes}
           selected={ancientOne}
