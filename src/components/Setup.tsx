@@ -6,8 +6,7 @@ import DeckCountSelect from './DeckCountSelect';
 import DifficultySelect from './DifficultySelect';
 
 function Setup() {
-  const numExpansions = packs.length;
-  const initialPackState: boolean[] = Array(numExpansions).fill(false);
+  const initialPackState: boolean[] = Array(packs.length).fill(false);
   // base pack is selected by default
   initialPackState[0] = true;
 
@@ -15,13 +14,7 @@ function Setup() {
 
   const [enabledPacks, setEnabledPacks] = useState(initialPackState);
 
-  const ancientOnes = packs
-    .filter((pack, index) => enabledPacks[index])
-    .flatMap((pack) => pack.ancientOnes)
-    .map((ao) => ao.name)
-    .sort();
-
-  const [ancientOne, setAncientOne] = useState(ancientOnes[0]);
+  const [ancientOne, setAncientOne] = useState('');
   const [difficulty, setDifficulty] = useState(difficulties[0].name);
   const [customDeckCount, setCustomDeckCount] = useState(initialCustomDeckCount);
 
@@ -33,7 +26,7 @@ function Setup() {
           setEnabledPacks={setEnabledPacks}
         />
         <AncientOneSelect
-          ancientOnes={ancientOnes}
+          enabledPacks={enabledPacks}
           selected={ancientOne}
           onChange={setAncientOne}
         />
