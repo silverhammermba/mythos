@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { difficulties } from '../content';
 
 interface DifficultySelectProps {
@@ -6,14 +7,16 @@ interface DifficultySelectProps {
 }
 
 function DifficultySelect({ selected, onChange }: DifficultySelectProps) {
+  const id = useId();
+
   const current = difficulties.find((difficulty) => difficulty.name === selected);
 
   return (
     <div className="difficulty-select-component">
-      <label htmlFor="difficulty-select">
+      <label htmlFor={id}>
         {'Deck building method '}
         <select
-          className="difficulty-select-component"
+          id={id}
           value={selected}
           onChange={(event) => onChange(event.currentTarget.value)}
         >

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useId } from 'react';
 import { packs } from '../content';
 
 interface AncientOneSelectProps {
@@ -12,6 +12,8 @@ function AncientOneSelect({
   selected,
   onChange,
 }: AncientOneSelectProps) {
+  const id = useId();
+
   const ancientOnes = packs
     .filter((pack, index) => enabledPacks[index])
     .flatMap((pack) => pack.ancientOnes)
@@ -28,9 +30,9 @@ function AncientOneSelect({
 
   return (
     <div className="ancient-one-select-component">
-      <label htmlFor="ao">
+      <label htmlFor={id}>
         {'Ancient One '}
-        <select id="ao" value={selected} onChange={(event) => onChange(event.currentTarget.value)}>
+        <select id={id} onChange={(event) => onChange(event.currentTarget.value)}>
           {ancientOnes.map((ancientOne) => (
             <option
               key={ancientOne}

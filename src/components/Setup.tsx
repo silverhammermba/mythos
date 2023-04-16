@@ -6,6 +6,7 @@ import DeckCountSelect from './DeckCountSelect';
 import DifficultySelect from './DifficultySelect';
 import PreludeSelect from './PreludeSelect';
 import CustomDifficulty from './CustomDifficulty';
+import StartingRumor from './StartingRumor';
 
 function Setup() {
   const [enabledPacks, setEnabledPacks] = useState(
@@ -33,18 +34,7 @@ function Setup() {
         />
         <DifficultySelect selected={difficulty} onChange={setDifficulty} />
         <PreludeSelect enabledPacks={enabledPacks} selected={prelude} onChange={setPrelude} />
-        <div id="srcb">
-          <label htmlFor="strm">
-            <input
-              type="checkbox"
-              id="strm"
-              name="startingrumor"
-              checked={startingRumor}
-              onChange={(event) => setStartingRumor(event.currentTarget.checked)}
-            />
-            {' Starting rumor'}
-          </label>
-        </div>
+        <StartingRumor selected={startingRumor} onChange={setStartingRumor} />
         {ancientOne === 'Custom' && <DeckCountSelect deckCount={customDeckCount} onChange={setCustomDeckCount} />}
         {difficulty === 'Custom' && <CustomDifficulty customDifficulty={customDifficulty} setCustomDifficulty={setCustomDifficulty} />}
       </form>

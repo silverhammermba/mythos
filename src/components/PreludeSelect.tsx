@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useId } from 'react';
 import { packs } from '../content';
 
 interface PreludeSelectProps {
@@ -12,6 +12,8 @@ function PreludeSelect({
   selected,
   onChange,
 }: PreludeSelectProps) {
+  const id = useId();
+
   const preludes = packs
     .filter((pack, index) => enabledPacks[index])
     .flatMap((pack) => pack.preludes)
@@ -27,9 +29,9 @@ function PreludeSelect({
 
   return preludes.length > 0 ? (
     <div className="prelude-select-component">
-      <label htmlFor="prelude">
+      <label htmlFor={id}>
         {'Prelude '}
-        <select id="prelude" value={selected} onChange={(event) => onChange(event.currentTarget.value)}>
+        <select id={id} value={selected} onChange={(event) => onChange(event.currentTarget.value)}>
           {preludes.map((prelude) => (
             <option
               key={prelude}

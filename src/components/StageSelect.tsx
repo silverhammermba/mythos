@@ -42,7 +42,11 @@ function StageSelect({
             step="1"
             placeholder="0"
             value={color.value}
-            onChange={(event) => color.change(event.currentTarget.valueAsNumber)}
+            onChange={(event) => {
+              if (!Number.isNaN(event.currentTarget.valueAsNumber)) {
+                color.change(event.currentTarget.valueAsNumber);
+              }
+            }}
           />
         </td>
       ))}

@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 interface DifficultySliderProps {
   name: string,
   proportion: number,
@@ -11,14 +13,16 @@ function DifficultySlider({
   onChange,
   adjustedProportion,
 }: DifficultySliderProps) {
+  const id = useId();
+
   return (
     <div className="difficulty-slider-component">
-      <label htmlFor={`ds-${name}`}>
+      <label htmlFor={id}>
         <input
           type="range"
           min="0"
           max="100"
-          id={`ds-${name}`}
+          id={id}
           value={proportion * 100}
           onChange={(event) => onChange(event.currentTarget.valueAsNumber / 100)}
         />

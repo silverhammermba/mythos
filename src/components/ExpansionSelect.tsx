@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 interface ExpansionSelectProp {
   name: string,
   selected: boolean,
@@ -9,12 +11,14 @@ function ExpansionSelect({
   selected,
   onChange,
 }: ExpansionSelectProp) {
+  const id = useId();
+
   return (
     <div className="expansion-select-component">
-      <label htmlFor={name}>
-        {name}
+      <label htmlFor={id}>
+        {`${name} `}
         <input
-          id={name}
+          id={id}
           type="checkbox"
           name="expansion"
           checked={selected}
