@@ -13,9 +13,16 @@ export const difficulties: Difficulty[] = [
   { name: 'Custom', description: undefined },
 ];
 
-export const packs = [
+export interface Pack {
+  name: string,
+  preludes: { name: string }[],
+  ancientOnes: { name: string, deck: number[] }[],
+}
+
+export const packs: Pack[] = [
   {
     name: 'Eldritch Horror',
+    preludes: [],
     ancientOnes: [ //           G1 Y1 B1 G2 Y2 B2 G3 Y3 B3
       { name: 'Azathoth', deck: [1, 2, 1, 2, 3, 1, 2, 4, 0] },
       { name: 'Cthulhu', deck: [0, 2, 2, 1, 3, 0, 3, 4, 0] },
@@ -25,12 +32,16 @@ export const packs = [
   },
   {
     name: 'Forsaken Lore',
+    preludes: [],
     ancientOnes: [
       { name: 'Yig', deck: [1, 2, 1, 2, 3, 1, 2, 4, 0] },
     ],
   },
   {
     name: 'Mountains of Madness',
+    preludes: [
+      { name: 'Rumors From the North' },
+    ],
     ancientOnes: [
       { name: 'Ithaqua', deck: [0, 2, 2, 4, 2, 0, 2, 4, 0] },
       { name: 'Rise of the Elder Things', deck: [2, 2, 1, 3, 3, 1, 4, 4, 0] },
@@ -38,12 +49,14 @@ export const packs = [
   },
   {
     name: 'Strange Remnants',
+    preludes: [],
     ancientOnes: [
       { name: 'Syzygy', deck: [0, 2, 2, 3, 3, 0, 3, 5, 0] },
     ],
   },
   {
     name: 'Under the Pyramids',
+    preludes: [],
     ancientOnes: [
       { name: 'Abhoth', deck: [1, 2, 1, 3, 2, 1, 2, 4, 0] },
       { name: 'Nephren-Ka', deck: [0, 2, 2, 1, 3, 0, 3, 4, 0] },
@@ -51,12 +64,18 @@ export const packs = [
   },
   {
     name: 'Signs of Carcosa',
+    preludes: [
+      { name: 'The King In Yellow' },
+    ],
     ancientOnes: [
       { name: 'Hastur', deck: [0, 2, 2, 2, 3, 0, 3, 5, 0] },
     ],
   },
   {
     name: 'The Dreamlands',
+    preludes: [
+      { name: 'Web Between Worlds' },
+    ],
     ancientOnes: [
       { name: 'Atlach-Nacha', deck: [1, 2, 1, 3, 2, 1, 2, 4, 0] },
       { name: 'Hypnos', deck: [0, 2, 1, 2, 3, 1, 3, 4, 0] },
@@ -64,12 +83,14 @@ export const packs = [
   },
   {
     name: 'Cities in Ruin',
+    preludes: [],
     ancientOnes: [
       { name: 'Shudde M\'ell', deck: [0, 2, 2, 4, 2, 0, 2, 4, 0] },
     ],
   },
   {
     name: 'Masks of Nyarlathotep',
+    preludes: [],
     ancientOnes: [
       { name: 'Antediluvium', deck: [1, 2, 1, 2, 3, 1, 2, 4, 0] },
       { name: 'Nyarlathotep', deck: [1, 2, 1, 2, 3, 1, 2, 4, 0] },

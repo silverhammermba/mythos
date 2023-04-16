@@ -4,6 +4,7 @@ import AllExpansionSelect from './AllExpansionSelect';
 import AncientOneSelect from './AncientOneSelect';
 import DeckCountSelect from './DeckCountSelect';
 import DifficultySelect from './DifficultySelect';
+import PreludeSelect from './PreludeSelect';
 
 function Setup() {
   const initialPackState: boolean[] = Array(packs.length).fill(false);
@@ -14,7 +15,8 @@ function Setup() {
 
   const [enabledPacks, setEnabledPacks] = useState(initialPackState);
 
-  const [ancientOne, setAncientOne] = useState('');
+  const [ancientOne, setAncientOne] = useState<string>('');
+  const [prelude, setPrelude] = useState<string>('');
   const [difficulty, setDifficulty] = useState(difficulties[0].name);
   const [customDeckCount, setCustomDeckCount] = useState(initialCustomDeckCount);
 
@@ -31,7 +33,8 @@ function Setup() {
           onChange={setAncientOne}
         />
         <DifficultySelect selected={difficulty} onChange={setDifficulty} />
-        <DeckCountSelect deckCount={customDeckCount} onChange={setCustomDeckCount} />
+        <PreludeSelect enabledPacks={enabledPacks} selected={prelude} onChange={setPrelude} />
+        {ancientOne === 'Custom' && <DeckCountSelect deckCount={customDeckCount} onChange={setCustomDeckCount} />}
       </form>
     </div>
   );

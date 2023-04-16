@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { packs } from '../content';
 
 interface AncientOneSelectProps {
@@ -16,11 +17,14 @@ function AncientOneSelect({
     .flatMap((pack) => pack.ancientOnes)
     .map((ao) => ao.name)
     .sort();
+  ancientOnes.push('Custom');
 
-  // if we're ever somehow selecting a nonexistent AO, re-render
-  if (!ancientOnes.includes(selected)) {
-    onChange(ancientOnes[0]);
-  }
+  useEffect(() => {
+    // if we're ever somehow selecting a nonexistent AO, re-render
+    if (!selected || !ancientOnes.includes(selected)) {
+      onChange(ancientOnes[0]);
+    }
+  }, [ancientOnes, enabledPacks, selected, onChange]);
 
   return (
     <div className="ancient-one-select-component">
@@ -35,7 +39,6 @@ function AncientOneSelect({
               {ancientOne}
             </option>
           ))}
-          <option value="Custom">Custom</option>
         </select>
       </label>
     </div>
