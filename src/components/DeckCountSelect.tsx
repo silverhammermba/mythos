@@ -1,12 +1,12 @@
 import StageSelect from './StageSelect';
 
 interface DeckCountSelectProps {
-  deckCount: number[],
-  onChange: (updater: ((prev: number[]) => number[])) => void,
+  deckCount: string[],
+  onChange: (updater: ((prev: string[]) => string[])) => void,
 }
 
 function DeckCountSelect({ deckCount, onChange }: DeckCountSelectProps) {
-  const setDeckCount = (index: number) => (count: number) => {
+  const setDeckCount = (index: number) => (count: string) => {
     onChange((prev) => {
       const newCounts = [...prev];
       newCounts[index] = count;

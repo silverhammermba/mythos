@@ -16,13 +16,27 @@ function Setup() {
   const [ancientOne, setAncientOne] = useState<string>('');
   const [prelude, setPrelude] = useState<string>('');
   const [difficulty, setDifficulty] = useState(difficulties[0].name);
-  const [customDeckCount, setCustomDeckCount] = useState(Array<number>(9).fill(0));
+  // use strings for custom deck counts to allow invalid input (we validate later)
+  const [customDeckTmp, setCustomDeckTmp] = useState(Array<string>(9).fill(''));
   const [startingRumor, setStartingRumor] = useState(false);
   const [customDifficulty, setCustomDifficulty] = useState([1, 1, 1]);
 
+  const customDeckCount = customDeckTmp.map((count) => {
+    const num = Number.parseInt(count, 10);
+    return Number.isNaN(num) ? 0 : Math.round(num);
+  });
+  const customDeckValid = customDeckCount.every((count) => count >= 0)
+    && customDeckCount.find((count) => count > 0);
+  const ancientOneValid = Boolean(ancientOne) && (ancientOne !== 'Custom' || customDeckValid);
+
+  const startGame: React.FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    console.log('starting game!');
+  };
+
   return (
     <div className="setup-component">
-      <form>
+      <form onSubmit={startGame}>
         <AllExpansionSelect
           enabledPacks={enabledPacks}
           setEnabledPacks={setEnabledPacks}
@@ -35,8 +49,11 @@ function Setup() {
         <DifficultySelect selected={difficulty} onChange={setDifficulty} />
         <PreludeSelect enabledPacks={enabledPacks} selected={prelude} onChange={setPrelude} />
         <StartingRumor selected={startingRumor} onChange={setStartingRumor} />
-        {ancientOne === 'Custom' && <DeckCountSelect deckCount={customDeckCount} onChange={setCustomDeckCount} />}
+        {ancientOne === 'Custom' && <DeckCountSelect deckCount={customDeckTmp} onChange={setCustomDeckTmp} />}
         {difficulty === 'Custom' && <CustomDifficulty customDifficulty={customDifficulty} setCustomDifficulty={setCustomDifficulty} />}
+        <button type="submit" disabled={!ancientOneValid}>
+          Start Game
+        </button>
       </form>
     </div>
   );

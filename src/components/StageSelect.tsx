@@ -1,11 +1,13 @@
+import NumberInput from './NumberInput';
+
 interface StageSelectProps {
   name: string,
-  green: number,
-  yellow: number,
-  blue: number,
-  onChangeGreen: (count: number) => void,
-  onChangeYellow: (count: number) => void,
-  onChangeBlue: (count: number) => void,
+  green: string,
+  yellow: string,
+  blue: string,
+  onChangeGreen: (count: string) => void,
+  onChangeYellow: (count: string) => void,
+  onChangeBlue: (count: string) => void,
 }
 
 function StageSelect({
@@ -17,12 +19,6 @@ function StageSelect({
   onChangeYellow,
   onChangeBlue,
 }: StageSelectProps) {
-  const colors = [
-    { className: 'green', value: green, change: onChangeGreen },
-    { className: 'yellow', value: yellow, change: onChangeYellow },
-    { className: 'blue', value: blue, change: onChangeBlue },
-  ];
-
   return (
     <tr className="stage-select-component">
       <th>
@@ -30,26 +26,9 @@ function StageSelect({
         {name}
         :
       </th>
-      {colors.map((color) => (
-        <td
-          className={color.className}
-          key={`${name}-${color.className}`}
-        >
-          <input
-            type="number"
-            min="0"
-            max="99"
-            step="1"
-            placeholder="0"
-            value={color.value}
-            onChange={(event) => {
-              if (!Number.isNaN(event.currentTarget.valueAsNumber)) {
-                color.change(event.currentTarget.valueAsNumber);
-              }
-            }}
-          />
-        </td>
-      ))}
+      <NumberInput className="green" value={green} onChange={onChangeGreen} />
+      <NumberInput className="yellow" value={yellow} onChange={onChangeYellow} />
+      <NumberInput className="blue" value={blue} onChange={onChangeBlue} />
     </tr>
   );
 }
