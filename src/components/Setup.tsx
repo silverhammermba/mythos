@@ -8,18 +8,14 @@ import PreludeSelect from './PreludeSelect';
 import CustomDifficulty from './CustomDifficulty';
 
 function Setup() {
-  const initialPackState: boolean[] = Array(packs.length).fill(false);
-  // base pack is selected by default
-  initialPackState[0] = true;
-
-  const initialCustomDeckCount = Array<number>(9).fill(0);
-
-  const [enabledPacks, setEnabledPacks] = useState(initialPackState);
-
+  const [enabledPacks, setEnabledPacks] = useState(
+    // base pack is selected by default
+    Array.from({ length: packs.length }, (_, index) => index === 0),
+  );
   const [ancientOne, setAncientOne] = useState<string>('');
   const [prelude, setPrelude] = useState<string>('');
   const [difficulty, setDifficulty] = useState(difficulties[0].name);
-  const [customDeckCount, setCustomDeckCount] = useState(initialCustomDeckCount);
+  const [customDeckCount, setCustomDeckCount] = useState(Array<number>(9).fill(0));
   const [startingRumor, setStartingRumor] = useState(false);
   const [customDifficulty, setCustomDifficulty] = useState([1, 1, 1]);
 

@@ -21,14 +21,17 @@ function AllExpansionSelect({
   return (
     <fieldset className="all-expansion-select-component">
       <legend>Expansions</legend>
-      {packs.map((pack, index) => index !== 0 && (
-        <ExpansionSelect
-          key={pack.name}
-          name={pack.name}
-          selected={enabledPacks[index]}
-          onChange={setEnabled(index)}
-        />
-      ))}
+      {
+        // don't show base pack since we never want to deselect it
+        packs.map((pack, index) => index !== 0 && (
+          <ExpansionSelect
+            key={pack.name}
+            name={pack.name}
+            selected={enabledPacks[index]}
+            onChange={setEnabled(index)}
+          />
+        ))
+      }
     </fieldset>
   );
 }
