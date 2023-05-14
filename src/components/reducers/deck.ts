@@ -367,7 +367,8 @@ export type DeckAction =
     cards: Card[],
     counts: number[],
     active: Card[],
-    difficulty: Difficulty
+    difficulty: Difficulty,
+    startingRumor: boolean,
   }
   | { type: DeckActionType.ShuffleDeck }
   | { type: DeckActionType.DiscardActive }
@@ -389,6 +390,11 @@ export const deckReducer = (state: Deck, action: DeckAction): Deck => {
       action.active.forEach((activeCard) => {
         remove(box, 1, (card: Card) => card.id === activeCard.id);
       });
+
+      const active = [
+        ...action.active,
+        ...choose(action.difficulty, box, action.startingRumor ? 1 : 0, CardColor.Blue, 0),
+      ];
 
       const numStages = 3;
       const colors = [CardColor.Green, CardColor.Yellow, CardColor.Blue];
@@ -416,7 +422,7 @@ export const deckReducer = (state: Deck, action: DeckAction): Deck => {
 
       return {
         discard: [],
-        active: action.active,
+        active,
         stages,
         box,
         difficulty: action.difficulty,
