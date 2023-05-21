@@ -169,13 +169,13 @@ export const deckReducer = (state: Deck, action: DeckAction): Deck => {
     case DeckActionType.AbandonHope: { // yelw-72-HS
       const box = [...state.box];
       // get three yellow cards from the box
-      const yellow = choose(
+      const yellow = shuffle(choose(
         state.difficulty,
         box,
         3,
         CardColor.Yellow,
         currentStage(state.stages, state.counts),
-      );
+      ));
 
       // put them in play (and discard active cards)
       return deckReducer(

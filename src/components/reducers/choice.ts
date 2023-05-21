@@ -11,7 +11,7 @@ export function randomChoice(
 ): Card[] {
   const drawn = remove(box, count, (card) => card.color === color);
   if (drawn.length < count) {
-    console.warn(`not enough ${CardColor[color]} cards.`);
+    // console.warn(`not enough ${CardColor[color]} cards.`);
   }
   return drawn;
 }
@@ -26,7 +26,7 @@ export function noHardChoice(
     && card.difficulty !== CardDifficulty.Hard);
 
   if (notHard.length < count) {
-    console.warn(`not enough non-hard ${CardColor[color]} cards. adding some hard ones`);
+    // console.warn(`not enough non-hard ${CardColor[color]} cards. adding some hard ones`);
   }
 
   const hard = randomChoice(box, count - notHard.length, color);
@@ -45,7 +45,7 @@ export function normalChoice(
     && card.difficulty === CardDifficulty.Normal);
 
   if (normal.length < count) {
-    console.warn(`not enough normal ${CardColor[color]} cards. adding some random ones`);
+    // console.warn(`not enough normal ${CardColor[color]} cards. adding some random ones`);
   }
 
   const nonNormal = randomChoice(box, count - normal.length, color);
@@ -63,7 +63,7 @@ export function noEasyChoice(
     && card.difficulty !== CardDifficulty.Easy);
 
   if (notEasy.length < count) {
-    console.warn(`not enough non-easy ${CardColor[color]} cards. adding some easy ones`);
+    // console.warn(`not enough non-easy ${CardColor[color]} cards. adding some easy ones`);
   }
 
   const easy = randomChoice(box, count - notEasy.length, color);
@@ -81,14 +81,14 @@ export function easyChoice(
     && card.difficulty === CardDifficulty.Easy);
 
   if (easy.length < count) {
-    console.warn(`not enough easy ${CardColor[color]} cards. adding some normal ones`);
+    // console.warn(`not enough easy ${CardColor[color]} cards. adding some normal ones`);
   }
 
   const normal = remove(box, count - easy.length, (card) => card.color === color
     && card.difficulty === CardDifficulty.Normal);
 
   if (easy.length + normal.length < count) {
-    console.warn(`not enough normal ${CardColor[color]} cards. adding some hard ones`);
+    // console.warn(`not enough normal ${CardColor[color]} cards. adding some hard ones`);
   }
 
   const hard = randomChoice(box, count - easy.length - normal.length, color);
@@ -106,14 +106,14 @@ export function hardChoice(
     && card.difficulty === CardDifficulty.Hard);
 
   if (hard.length < count) {
-    console.warn(`not enough hard ${CardColor[color]} cards. adding some normal ones`);
+    // console.warn(`not enough hard ${CardColor[color]} cards. adding some normal ones`);
   }
 
   const normal = remove(box, count - hard.length, (card) => card.color === color
     && card.difficulty === CardDifficulty.Normal);
 
   if (hard.length + normal.length < count) {
-    console.warn(`not enough normal ${CardColor[color]} cards. adding some easy ones`);
+    // console.warn(`not enough normal ${CardColor[color]} cards. adding some easy ones`);
   }
 
   const easy = randomChoice(box, count - hard.length - normal.length, color);
@@ -159,9 +159,9 @@ export function customChoice(
   normal: number,
   hard: number,
 ): ChoiceFunction {
-  const total = easy + normal + hard;
-  const minNormal = easy / total;
-  const minHard = (easy + normal) / total;
+  const total = Math.max(easy + normal + hard, 0);
+  const minNormal = total === 0 ? 1 / 3 : Math.max(easy, 0) / total;
+  const minHard = total === 0 ? 2 / 3 : Math.max(easy + normal, 0) / total;
 
   // randomly choose a choice function based on the difficulty proportion
   const randomChoiceFunction = () => {

@@ -11,7 +11,9 @@ export interface Deck {
   counts: number[], // original stage counts (for determining stage later)
 }
 
-// a function for adding cards to the deck from the box
+// a function for removing cards from the box
+// a choice function assumes that the box is already shuffled
+// its return value may be sorted according to some internal criteria
 export type ChoiceFunction = (
   box: Card[],
   count: number,
