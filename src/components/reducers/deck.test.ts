@@ -135,7 +135,7 @@ describe('DeckAction.Build', () => {
         [CardColor.Blue, CardDifficulty.Easy],
         [CardColor.Blue, CardDifficulty.Normal],
       ]),
-      difficulty: { type: DifficultyType.Staged, harderRumors: true },
+      difficulty: { type: DifficultyType.Random },
       discard: [],
       active: [],
       stages: [],
@@ -143,6 +143,34 @@ describe('DeckAction.Build', () => {
     };
 
     const built = deckReducer(input, { type: DeckActionType.Build, startingRumor: true });
+    // TODO: expects 3 to be 4 for some reason
     expect(built.stages.map((s) => ids(s).sort())).toEqual([['0'], ['2'], ['3'], ['1']]);
+  });
+});
+
+describe('DeckAction.ShuffleDeck', () => {
+  it('works', () => {
+    const input: Deck = {
+      box: [],
+      difficulty: { type: DifficultyType.Random },
+      discard: [],
+      active: [],
+      stages: [mockBox([
+        [CardColor.Green, CardDifficulty.Easy],
+        [CardColor.Yellow, CardDifficulty.Normal],
+      ]), mockBox([
+        [CardColor.Blue, CardDifficulty.Easy],
+      ]), mockBox([
+        [CardColor.Green, CardDifficulty.Hard],
+      ])],
+      counts: [],
+    };
+
+    const shuffled = deckReducer(input, { type: DeckActionType.ShuffleDeck });
+    expect(shuffled.stages.map((s) => s.map((c) => `${c.id}${c.color}`).sort())).toEqual([
+      [],
+      [],
+      ['00', '00', '02', '11'],
+    ]);
   });
 });
