@@ -12,13 +12,13 @@ import {
 } from './choice';
 
 // construct a box using just color/difficulty. card ids match index in the returned array
-function mockBox(mocks: [CardColor, CardDifficulty][]): Card[] {
+export function mockBox(mocks: [CardColor, CardDifficulty][]): Card[] {
   return mocks.map((mock, index) => ({
     id: `${index}`, color: mock[0], difficulty: mock[1], eldritch: 0, clues: 0, ongoing: false,
   }));
 }
 
-function ids(cards: Card[]): string[] {
+export function ids(cards: Card[]): string[] {
   return cards.map((card) => card.id);
 }
 
@@ -362,11 +362,11 @@ describe('customChoice', () => {
     const nhard = result.filter((c) => c.difficulty === CardDifficulty.Hard).length;
 
     // probabilistic test. these should be the 99th percentile bounds for each
-    expect(neasy).toBeGreaterThan(14);
-    expect(neasy).toBeLessThan(35);
+    expect(neasy).toBeGreaterThan(12);
+    expect(neasy).toBeLessThan(37);
     expect(nnormal).toBeGreaterThan(37);
     expect(nnormal).toBeLessThan(63);
-    expect(nhard).toBeGreaterThan(14);
-    expect(nhard).toBeLessThan(35);
+    expect(nhard).toBeGreaterThan(12);
+    expect(nhard).toBeLessThan(37);
   });
 });

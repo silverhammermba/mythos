@@ -1,11 +1,10 @@
 import { Deck } from '../../types/deck';
-import { Difficulty } from '../../types/difficulty';
 import { CardColor, Card } from '../../types/card';
 import { remove, shuffle } from './array';
 import { choose } from './choice';
 
 // determine what stage we're in, based on the original deck counts
-function currentStage(stages: Card[][], counts: number[]): number {
+export function currentStage(stages: any[][], counts: number[]): number {
   // this is nontrivial since the deck can be modified during the game
   const stageCounts = [] as number[];
 
@@ -32,7 +31,7 @@ function currentStage(stages: Card[][], counts: number[]): number {
   return 0;
 }
 
-enum DeckActionType {
+export enum DeckActionType {
   Build, // set up stages and active cards for game start
   ShuffleDeck,
   DiscardActive,
@@ -47,14 +46,7 @@ enum DeckActionType {
 }
 
 export type DeckAction =
-  | {
-    type: DeckActionType.Build,
-    cards: Card[],
-    counts: number[],
-    active: Card[],
-    difficulty: Difficulty,
-    startingRumor: boolean,
-  }
+  | { type: DeckActionType.Build, startingRumor: boolean }
   | { type: DeckActionType.ShuffleDeck }
   | { type: DeckActionType.DiscardActive }
   | { type: DeckActionType.Draw }
@@ -69,16 +61,16 @@ export type DeckAction =
 export const deckReducer = (state: Deck, action: DeckAction): Deck => {
   switch (action.type) {
     case DeckActionType.Build: {
-      const box = shuffle([...action.cards]);
+      const box = [...state.box];
 
       // ensure that active cards are not in the box (never should have duplicates)
-      action.active.forEach((activeCard) => {
+      state.active.forEach((activeCard) => {
         remove(box, 1, (card: Card) => card.id === activeCard.id);
       });
 
       const active = [
-        ...action.active,
-        ...choose(action.difficulty, box, action.startingRumor ? 1 : 0, CardColor.Blue, 0),
+        ...state.active,
+        ...choose(state.difficulty, box, action.startingRumor ? 1 : 0, CardColor.Blue, 0),
       ];
 
       const numStages = 3;
@@ -86,18 +78,18 @@ export const deckReducer = (state: Deck, action: DeckAction): Deck => {
 
       const stages: Card[][] = [];
 
-      if (action.counts.length !== numStages * colors.length) {
-        console.error(`wrong number of ancient one deck stage counts: ${action.counts.length}`);
+      if (state.counts.length !== numStages * colors.length) {
+        console.error(`wrong number of ancient one deck stage counts: ${state.counts.length}`);
       }
 
-      for (let s = 0; s < action.counts.length; s += colors.length) {
+      for (let s = 0; s < state.counts.length; s += colors.length) {
         const stage: Card[] = [];
 
-        for (let i = 0; i < colors.length && s + i < action.counts.length; i += 1) {
+        for (let i = 0; i < colors.length && s + i < state.counts.length; i += 1) {
           const color = colors[i];
-          const count = action.counts[s + i];
+          const count = state.counts[s + i];
 
-          const drawn = choose(action.difficulty, box, count, color, stages.length);
+          const drawn = choose(state.difficulty, box, count, color, stages.length);
 
           stage.push(...drawn);
         }
@@ -106,12 +98,11 @@ export const deckReducer = (state: Deck, action: DeckAction): Deck => {
       }
 
       return {
+        ...state,
         discard: [],
         active,
         stages,
         box,
-        difficulty: action.difficulty,
-        counts: action.counts,
       };
     }
     case DeckActionType.ShuffleDeck: {
