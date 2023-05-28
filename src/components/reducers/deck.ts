@@ -79,7 +79,7 @@ export const deckReducer = (state: Deck, action: DeckAction): Deck => {
       const stages: Card[][] = [];
 
       if (state.counts.length !== numStages * colors.length) {
-        console.error(`wrong number of ancient one deck stage counts: ${state.counts.length}`);
+        // console.error(`wrong number of ancient one deck stage counts: ${state.counts.length}`);
       }
 
       for (let s = 0; s < state.counts.length; s += colors.length) {

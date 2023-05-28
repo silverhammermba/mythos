@@ -125,4 +125,24 @@ describe('DeckAction.Build', () => {
     // 4 is gone because it's active
     expect(built.stages.map((s) => ids(s).sort())).toEqual([['0', '2'], ['1', '3'], []]);
   });
+
+  it('can build a deck with weird counts', () => {
+    const input: Deck = {
+      box: mockBox([
+        [CardColor.Green, CardDifficulty.Easy],
+        [CardColor.Yellow, CardDifficulty.Easy],
+        [CardColor.Green, CardDifficulty.Easy],
+        [CardColor.Blue, CardDifficulty.Easy],
+        [CardColor.Blue, CardDifficulty.Normal],
+      ]),
+      difficulty: { type: DifficultyType.Staged, harderRumors: true },
+      discard: [],
+      active: [],
+      stages: [],
+      counts: [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4],
+    };
+
+    const built = deckReducer(input, { type: DeckActionType.Build, startingRumor: true });
+    expect(built.stages.map((s) => ids(s).sort())).toEqual([['0'], ['2'], ['3'], ['1']]);
+  });
 });

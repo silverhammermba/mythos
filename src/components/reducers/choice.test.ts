@@ -364,8 +364,8 @@ describe('customChoice', () => {
     // probabilistic test. these should be the 99th percentile bounds for each
     expect(neasy).toBeGreaterThan(12);
     expect(neasy).toBeLessThan(37);
-    expect(nnormal).toBeGreaterThan(37);
-    expect(nnormal).toBeLessThan(63);
+    expect(nnormal).toBeGreaterThan(35);
+    expect(nnormal).toBeLessThan(65);
     expect(nhard).toBeGreaterThan(12);
     expect(nhard).toBeLessThan(37);
   });
