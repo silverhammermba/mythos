@@ -1,4 +1,9 @@
-import { currentStage, deckReducer, DeckActionType, initialDeckState } from './deck';
+import {
+  currentStage,
+  deckReducer,
+  DeckActionType,
+  initialDeckState,
+} from './deck';
 import { DifficultyType } from '../../types/difficulty';
 import { Deck } from '../../types/deck';
 import { ids, mockBox } from './choice.test';

@@ -53,7 +53,7 @@ export const packs: Pack[] = [
      * COLOR:      blue/yelw/gren
      * ID:         unique ID to avoid name conflicts (not used internally)
      * DIFFICULTY: E/N/H for easy/normal/hard
-     * EXPANSION:  single letter code indicating expansion (see index.html)
+     * EXPANSION:  single letter code indicating expansion (unused)
      * ELDRITCH:   (optional) number of starting eldritch tokens, or - for ongoing but no tokens
      * CLUES:      (optional) a lowercase c if clues can be placed on the card
      */

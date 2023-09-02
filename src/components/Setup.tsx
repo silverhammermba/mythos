@@ -41,6 +41,24 @@ export function buildDifficulty(
   }
 }
 
+export function buildCounts(
+  ancientOneName: string,
+  customCounts: number[],
+): number[] {
+  if (ancientOneName === 'Custom') {
+    return customCounts;
+  }
+  for (let i = 0; i < packs.length; i += 1) {
+    for (let j = 0; j < packs[i].ancientOnes.length; j += 1) {
+      const ao = packs[i].ancientOnes[j];
+      if (ao.name === ancientOneName) {
+        return ao.deck;
+      }
+    }
+  }
+  return packs[0].ancientOnes[0].deck;
+}
+
 interface SetupProp {
   deck: Deck,
   dispatch: Dispatch<DeckAction>,
@@ -81,7 +99,7 @@ function Setup({
       active: [], // TODO: get prelude card,
       box: [], // TODO: load cards
       difficulty: buildDifficulty(difficulty ?? difficulties[0], customDifficulty),
-      counts: [], // TODO: get counts from AO data
+      counts: buildCounts(ancientOne, customDeckCount),
       startingRumor,
     });
   };
