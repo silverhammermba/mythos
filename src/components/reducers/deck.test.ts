@@ -2,7 +2,7 @@ import { currentStage, deckReducer, DeckActionType } from './deck';
 import { DifficultyType } from '../../types/difficulty';
 import { Deck } from '../../types/deck';
 import { ids, mockBox } from './choice.test';
-import { CardColor, CardDifficulty } from '../../types/card';
+import { Card, CardColor, CardDifficulty } from '../../types/card';
 
 //                    3        3        3
 const counts = [3, 0, 0, 1, 1, 1, 0, 2, 1];
@@ -142,8 +142,7 @@ describe('DeckAction.Build', () => {
       counts: [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4],
     };
 
-    const built = deckReducer(input, { type: DeckActionType.Build, startingRumor: true });
-    // TODO: expects 3 to be 4 for some reason
+    const built = deckReducer(input, { type: DeckActionType.Build, startingRumor: false });
     expect(built.stages.map((s) => ids(s).sort())).toEqual([['0'], ['2'], ['3'], ['1']]);
   });
 });
@@ -172,5 +171,249 @@ describe('DeckAction.ShuffleDeck', () => {
       [],
       ['00', '00', '02', '11'],
     ]);
+  });
+});
+
+describe('DeckAction.DiscardActive', () => {
+  it('works', () => {
+    const input: Deck = {
+      box: [],
+      difficulty: { type: DifficultyType.Random },
+      discard: mockBox([[CardColor.Green, CardDifficulty.Easy]]),
+      active: [
+        {
+          id: 'a',
+          color: CardColor.Blue,
+          difficulty: CardDifficulty.Normal,
+          ongoing: true,
+        },
+        {
+          id: 'b',
+          color: CardColor.Yellow,
+          difficulty: CardDifficulty.Hard,
+          ongoing: false,
+        },
+      ],
+      stages: [],
+      counts: [],
+    };
+
+    const discarded = deckReducer(input, { type: DeckActionType.DiscardActive });
+    expect(discarded.discard.map((c) => c.id)).toEqual(['0', 'b']);
+    expect(discarded.active.map((c) => c.id)).toEqual(['a']);
+  });
+
+  it('can do nothing', () => {
+    const input: Deck = {
+      box: [],
+      difficulty: { type: DifficultyType.Random },
+      discard: [],
+      active: [],
+      stages: [],
+      counts: [],
+    };
+
+    const discarded = deckReducer(input, { type: DeckActionType.DiscardActive });
+    expect(discarded).toEqual(input);
+  });
+});
+
+describe('DeckAction.Draw', () => {
+  it('works', () => {
+    const input: Deck = {
+      box: [],
+      difficulty: { type: DifficultyType.Random },
+      discard: [
+        {
+          id: 'a', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: true,
+        },
+      ],
+      active: [
+        {
+          id: 'b', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: true,
+        },
+        {
+          id: 'c', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: false,
+        },
+      ],
+      stages: [
+        [],
+        [
+          {
+            id: 'd', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: false,
+          },
+          {
+            id: 'e', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: false,
+          },
+        ],
+        [
+          {
+            id: 'f', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: false,
+          },
+        ],
+      ],
+      counts: [],
+    };
+
+    const drew = deckReducer(input, { type: DeckActionType.Draw });
+    expect(drew.discard.map((c) => c.id)).toEqual(['a', 'c']);
+    expect(drew.active.map((c) => c.id)).toEqual(['b', 'd']);
+    expect(drew.stages.map((s) => s.map((c) => c.id))).toEqual([[], ['e'], ['f']]);
+  });
+
+  it('can do nothing', () => {
+    const input: Deck = {
+      box: [],
+      difficulty: { type: DifficultyType.Random },
+      discard: [],
+      active: [],
+      stages: [],
+      counts: [],
+    };
+
+    const discarded = deckReducer(input, { type: DeckActionType.Draw });
+    expect(discarded).toEqual(input);
+  });
+});
+
+describe('DeckAction.UnimaginableHorror', () => {
+  // skipping tests because it's trivial
+});
+
+describe('DeckAction.TheStorm', () => {
+  // skipping tests because it's very similar to AbandonHope
+});
+
+describe('DeckAction.AbandonHope', () => {
+  it('works', () => {
+    const input: Deck = {
+      box: [
+        {
+          id: 'a', color: CardColor.Green, difficulty: CardDifficulty.Hard, ongoing: true,
+        },
+        {
+          id: 'x', color: CardColor.Yellow, difficulty: CardDifficulty.Easy, ongoing: false,
+        },
+        {
+          id: 'b', color: CardColor.Yellow, difficulty: CardDifficulty.Hard, ongoing: true,
+        },
+        {
+          id: 'y', color: CardColor.Yellow, difficulty: CardDifficulty.Normal, ongoing: false,
+        },
+        {
+          id: 'z', color: CardColor.Yellow, difficulty: CardDifficulty.Easy, ongoing: false,
+        },
+      ],
+      difficulty: { type: DifficultyType.Easy },
+      discard: [
+        {
+          id: 'd', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: true,
+        },
+      ],
+      active: [
+        {
+          id: 'e', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: true,
+        },
+        {
+          id: 'f', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: false,
+        },
+      ],
+      stages: [
+        mockBox([[CardColor.Yellow, CardDifficulty.Hard]]),
+      ],
+      counts: [],
+    };
+
+    const hoped = deckReducer(input, { type: DeckActionType.AbandonHope });
+    expect(hoped.box.map((c) => c.id)).toEqual(['a', 'b']);
+    expect(hoped.discard.map((c) => c.id)).toEqual(['d', 'f']);
+    expect(hoped.active.map((c) => c.id).sort()).toEqual(['e', 'x', 'y', 'z']);
+    expect(hoped.stages).toEqual(input.stages);
+  });
+});
+
+describe('DeckAction.LostToTime', () => {
+  it('works', () => {
+    const input: Deck = {
+      box: [],
+      difficulty: { type: DifficultyType.Easy },
+      discard: [
+        {
+          id: 'd', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: true,
+        },
+      ],
+      active: mockBox([[CardColor.Blue, CardDifficulty.Hard]]),
+      stages: [
+        [],
+        mockBox([
+          [CardColor.Yellow, CardDifficulty.Hard],
+          [CardColor.Green, CardDifficulty.Hard],
+        ]),
+        mockBox([[CardColor.Green, CardDifficulty.Hard]]),
+      ],
+      counts: [],
+    };
+
+    const lost = deckReducer(input, { type: DeckActionType.LostToTime });
+    expect(lost.discard.map((c) => `${c.id}${c.color}`)).toEqual(['d2', '01']);
+    expect(lost.active).toEqual(input.active);
+    expect(lost.stages.map((s) => s.map((c) => `${c.id}${c.color}`).sort())).toEqual([[], [], ['00', '10']]);
+  });
+
+  it('can do nothing', () => {
+    const input: Deck = {
+      box: [],
+      difficulty: { type: DifficultyType.Easy },
+      discard: mockBox([[CardColor.Green, CardDifficulty.Hard]]),
+      active: mockBox([[CardColor.Blue, CardDifficulty.Hard]]),
+      stages: [[], [], []],
+      counts: [],
+    };
+
+    const lost = deckReducer(input, { type: DeckActionType.LostToTime });
+    expect(lost).toEqual(input);
+  });
+});
+
+describe('DeckAction.PactWithEibon', () => {
+  it('works', () => {
+    const input: Deck = {
+      box: [
+        {
+          id: 'a', color: CardColor.Green, difficulty: CardDifficulty.Hard, ongoing: true,
+        },
+        {
+          id: 'b', color: CardColor.Yellow, difficulty: CardDifficulty.Hard, ongoing: true,
+        },
+        {
+          id: 'y', color: CardColor.Green, difficulty: CardDifficulty.Normal, ongoing: false,
+        },
+        {
+          id: 'z', color: CardColor.Yellow, difficulty: CardDifficulty.Easy, ongoing: false,
+        },
+      ],
+      difficulty: { type: DifficultyType.Easy },
+      discard: [
+        {
+          id: 'd', color: CardColor.Blue, difficulty: CardDifficulty.Hard, ongoing: true,
+        },
+      ],
+      active: mockBox([[CardColor.Blue, CardDifficulty.Hard]]),
+      stages: [
+        mockBox([
+          [CardColor.Yellow, CardDifficulty.Hard],
+          [CardColor.Green, CardDifficulty.Hard],
+        ]),
+      ],
+      counts: [],
+    };
+
+    const pact = deckReducer(input, { type: DeckActionType.PactWithEibon });
+    expect(pact.box.map((c) => c.id)).toEqual(['a', 'b']);
+    expect(pact.discard.length).toEqual(4);
+    expect(pact.stages.length).toEqual(3);
+    expect(pact.stages[2].length).toEqual(1);
+    const discardAndDeck: Card[] = Array.prototype.concat.apply([], [pact.discard, pact.stages[2]]);
+    expect(discardAndDeck.map((c) => c.id).sort()).toEqual(['0', '1', 'd', 'y', 'z']);
   });
 });

@@ -31,6 +31,17 @@ export function currentStage(stages: any[][], counts: number[]): number {
   return 0;
 }
 
+// get cards from the box based on the current deck state
+export function chooseCurrent(state: Deck, count: number, color: CardColor) {
+  return choose(
+    state.difficulty,
+    state.box,
+    count,
+    color,
+    currentStage(state.stages, state.counts),
+  );
+}
+
 export enum DeckActionType {
   Build, // set up stages and active cards for game start
   ShuffleDeck,
@@ -141,38 +152,30 @@ export const deckReducer = (state: Deck, action: DeckAction): Deck => {
       return deckReducer(shuffled, { type: DeckActionType.Draw });
     }
     case DeckActionType.TheStorm: { // yelw-28-HB
-      const box = [...state.box];
-      // get a rumor from the box
-      const rumor = choose(
-        state.difficulty,
-        box,
-        1,
-        CardColor.Blue,
-        currentStage(state.stages, state.counts),
-      );
+      // discard active since this is kind of like drawing
+      const newState = deckReducer(state, { type: DeckActionType.DiscardActive });
 
-      // put it in play (and discard active cards)
-      return deckReducer(
-        { ...state, box, active: [...state.active, ...rumor] },
-        { type: DeckActionType.DiscardActive },
-      );
+      // get a rumor from the box
+      const rumor = chooseCurrent(newState, 1, CardColor.Blue);
+
+      // put it in play
+      return {
+        ...newState,
+        active: [...newState.active, ...rumor],
+      };
     }
     case DeckActionType.AbandonHope: { // yelw-72-HS
-      const box = [...state.box];
-      // get three yellow cards from the box
-      const yellow = shuffle(choose(
-        state.difficulty,
-        box,
-        3,
-        CardColor.Yellow,
-        currentStage(state.stages, state.counts),
-      ));
+      // discard active since this is kind of like drawing
+      const newState = deckReducer(state, { type: DeckActionType.DiscardActive });
 
-      // put them in play (and discard active cards)
-      return deckReducer(
-        { ...state, box, active: [...state.active, ...yellow] },
-        { type: DeckActionType.DiscardActive },
-      );
+      // get three yellow cards from the box
+      const yellow = shuffle(chooseCurrent(newState, 3, CardColor.Yellow));
+
+      // put them in play
+      return {
+        ...newState,
+        active: [...newState.active, ...yellow],
+      };
     }
     case DeckActionType.LostToTime: {
       const discard = [...state.discard];
@@ -191,18 +194,17 @@ export const deckReducer = (state: Deck, action: DeckAction): Deck => {
       return deckReducer({ ...state, stages, discard }, { type: DeckActionType.ShuffleDeck });
     }
     case DeckActionType.PactWithEibon: {
-      const box = [...state.box];
+      const newState = { ...state };
 
       // get one green and one yellow from the box
-      const stage = currentStage(state.stages, state.counts);
-      const green = choose(state.difficulty, box, 1, CardColor.Green, stage);
-      const yellow = choose(state.difficulty, box, 1, CardColor.Yellow, stage);
+      const green = chooseCurrent(newState, 1, CardColor.Green);
+      const yellow = chooseCurrent(newState, 1, CardColor.Yellow);
 
       // shuffle them into the deck
-      const stages = [...state.stages, green, yellow];
+      const stages = [...newState.stages, green, yellow];
       const deck = shuffle(Array.prototype.concat.apply([], stages) as Card[]);
 
-      const discard = [...state.discard];
+      const discard = [...newState.discard];
 
       // discard 3
       for (let i = 0; i < 3; i += 1) {
@@ -215,8 +217,7 @@ export const deckReducer = (state: Deck, action: DeckAction): Deck => {
       }
 
       return {
-        ...state,
-        box,
+        ...newState,
         discard,
         stages: [[], [], deck],
       };

@@ -14,7 +14,7 @@ export interface Card {
   id: string,
   color: CardColor,
   difficulty: CardDifficulty,
-  eldritch: number | undefined,
-  clues: number | undefined,
+  eldritch?: number,
+  clues?: number,
   ongoing: boolean,
 }
