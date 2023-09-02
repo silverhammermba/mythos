@@ -1,5 +1,5 @@
 import { Card, CardColor } from './card';
-import { Difficulty } from './difficulty';
+import { DeckDifficulty } from './difficulty';
 
 // represents not just the deck but the entire mythos card state for the whole game
 export interface Deck {
@@ -7,7 +7,7 @@ export interface Deck {
   active: Card[],
   stages: Card[][],
   box: Card[], // unused cards (already shuffled)
-  difficulty: Difficulty,
+  difficulty: DeckDifficulty,
   counts: number[], // original stage counts (for determining stage later)
 }
 

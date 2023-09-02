@@ -1,6 +1,6 @@
 import { remove } from './array';
 import { CardColor, CardDifficulty, Card } from '../../types/card';
-import { Difficulty, DifficultyType } from '../../types/difficulty';
+import { DeckDifficulty, DifficultyType } from '../../types/difficulty';
 import { ChoiceFunction } from '../../types/deck';
 
 // choose cards simply based on order in the box
@@ -198,7 +198,7 @@ export function customChoice(
 }
 
 export function choose(
-  difficulty: Difficulty,
+  difficulty: DeckDifficulty,
   box: Card[],
   count: number,
   color: CardColor,

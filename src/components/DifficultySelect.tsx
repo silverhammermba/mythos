@@ -1,15 +1,13 @@
 import { useId } from 'react';
-import { difficulties } from '../content';
+import { Difficulty, difficulties } from '../content';
 
 interface DifficultySelectProps {
-  selected: string | undefined,
-  onChange: (selection: string) => void,
+  selected: Difficulty,
+  onChange: (selection: Difficulty) => void,
 }
 
 function DifficultySelect({ selected, onChange }: DifficultySelectProps) {
   const id = useId();
-
-  const current = difficulties.find((difficulty) => difficulty.name === selected);
 
   return (
     <div className="difficulty-select-component">
@@ -17,8 +15,12 @@ function DifficultySelect({ selected, onChange }: DifficultySelectProps) {
         {'Deck building method '}
         <select
           id={id}
-          value={selected}
-          onChange={(event) => onChange(event.currentTarget.value)}
+          value={selected?.name}
+          onChange={(event) => onChange(
+            difficulties.find(
+              (difficulty) => difficulty?.name === event.currentTarget.value,
+            ) ?? difficulties[0],
+          )}
         >
           {difficulties.map((difficulty) => (
             <option
@@ -30,9 +32,9 @@ function DifficultySelect({ selected, onChange }: DifficultySelectProps) {
           ))}
         </select>
       </label>
-      {current?.description && (
+      {selected?.description && (
         <p>
-          {current.description}
+          {selected.description}
         </p>
       )}
     </div>

@@ -1,17 +1,20 @@
+import { DifficultyType } from '../types/difficulty';
+
 export interface Difficulty {
   name: string,
-  description: string | undefined,
+  type: DifficultyType,
+  description?: string,
 }
 
 export const difficulties: Difficulty[] = [
-  { name: 'Normal', description: 'The normal Mythos setup. Expect the unexpected.' },
-  { name: 'No Hard', description: 'All hard Mythos cards removed. Good for beginners.' },
-  { name: 'No Easy', description: 'All easy Mythos cards removed. Good for experts.' },
-  { name: 'Easy only', description: 'Only easy Mythos cards are used. For a more relaxing apocalypse.' },
-  { name: 'Hard only', description: 'Are you sure you wanh̷̗̗̳̤̭̫\'̺͇̳ng̠̟̻̼͡l̴̺̞̣̣͍ͅu̞̥i̗ ͚m̥̗̫͝ͅg̴l͎̕w̦̮\'̟n҉̖̺̼̦̬a̗̕f͟h̢͔ C̳̯̺͙̞ͅt͉h̙̦͚̼͔͡u̱͈̙̩̜l̪̲̙̭̰ͅh͇̼̪̹̱̝͡u ̙̥͕̗̜̓̿̌̔̾̓̆͞R̢̛̹͎͈̙̳̿͑̾͡\'̈́ͦͧͫͨͨ̈͏̠l͇̩͕͎͌͆͊ͥ̒͞ẙ̉̑̔͞҉̠͇̣̖̹̝̺ͅe̛͌̎̐̆̏͂̈͆͏̨̣̱͙͎h̷̦̲͎̥̜̻̹͂ͯ̆̌͗͘͢ ̜͈͒̏͂̉ͥ̄̄̅̚w̛̪͙͍͚̰̫̹̮͓ͤ̂ͦ͛̈̏g̶̳͎ͩ͑̅a̢̱̰̫̱̲̬̝̘̺͑ͫ́̊ͮ͛̔͐̐́ȟ̻̟̻͂̅͗̄́̉̉́͟\'̷͓̰̘̟̫̜̲ͭ̅ṋ̡͓̘̰̙͒̄ͭ͒͑ͧa͉͈͈̜̖̘̅ͣͩͤ̍͛̃̇́̚g̝̬̺͉̫̲̻͆͒ḷ̣̙̘̓ͥ̽ͦ͂ ̨̛̼̣̭̫͔̞ͫ̑́ͅf̶̛̝̞͉̦̤͚̞͔ͬ͒ͪͅh̸̞͍̗̣͉͔̔̒̄̏̄̒̓̽̚t̼̱̪̥̙ͦ̏͗ͩͮ̔̉a̴̯͇͚̿͛̆̃̋g͋̉̀̈̇̚͏͏̠̤̮̖͚̜ͅn̷̴̰̱ͮͨͣͧͅ.̯͇̲̦͖ͭ̍ͥͨͅ' },
-  { name: 'Staged', description: 'Mythos cards increase in difficulty with each stage. No hard rumors.' },
-  { name: 'Staged (Harder)', description: 'Mythos cards increase in difficulty with each stage. No easy rumors.' },
-  { name: 'Custom', description: undefined },
+  { name: 'Normal', type: DifficultyType.Random, description: 'The normal Mythos setup. Expect the unexpected.' },
+  { name: 'No Hard', type: DifficultyType.NoHard, description: 'All hard Mythos cards removed. Good for beginners.' },
+  { name: 'No Easy', type: DifficultyType.NoEasy, description: 'All easy Mythos cards removed. Good for experts.' },
+  { name: 'Easy only', type: DifficultyType.Easy, description: 'Only easy Mythos cards are used. For a more relaxing apocalypse.' },
+  { name: 'Hard only', type: DifficultyType.Hard, description: 'Are you sure you wanh̷̗̗̳̤̭̫\'̺͇̳ng̠̟̻̼͡l̴̺̞̣̣͍ͅu̞̥i̗ ͚m̥̗̫͝ͅg̴l͎̕w̦̮\'̟n҉̖̺̼̦̬a̗̕f͟h̢͔ C̳̯̺͙̞ͅt͉h̙̦͚̼͔͡u̱͈̙̩̜l̪̲̙̭̰ͅh͇̼̪̹̱̝͡u ̙̥͕̗̜̓̿̌̔̾̓̆͞R̢̛̹͎͈̙̳̿͑̾͡\'̈́ͦͧͫͨͨ̈͏̠l͇̩͕͎͌͆͊ͥ̒͞ẙ̉̑̔͞҉̠͇̣̖̹̝̺ͅe̛͌̎̐̆̏͂̈͆͏̨̣̱͙͎h̷̦̲͎̥̜̻̹͂ͯ̆̌͗͘͢ ̜͈͒̏͂̉ͥ̄̄̅̚w̛̪͙͍͚̰̫̹̮͓ͤ̂ͦ͛̈̏g̶̳͎ͩ͑̅a̢̱̰̫̱̲̬̝̘̺͑ͫ́̊ͮ͛̔͐̐́ȟ̻̟̻͂̅͗̄́̉̉́͟\'̷͓̰̘̟̫̜̲ͭ̅ṋ̡͓̘̰̙͒̄ͭ͒͑ͧa͉͈͈̜̖̘̅ͣͩͤ̍͛̃̇́̚g̝̬̺͉̫̲̻͆͒ḷ̣̙̘̓ͥ̽ͦ͂ ̨̛̼̣̭̫͔̞ͫ̑́ͅf̶̛̝̞͉̦̤͚̞͔ͬ͒ͪͅh̸̞͍̗̣͉͔̔̒̄̏̄̒̓̽̚t̼̱̪̥̙ͦ̏͗ͩͮ̔̉a̴̯͇͚̿͛̆̃̋g͋̉̀̈̇̚͏͏̠̤̮̖͚̜ͅn̷̴̰̱ͮͨͣͧͅ.̯͇̲̦͖ͭ̍ͥͨͅ' },
+  { name: 'Staged', type: DifficultyType.Staged, description: 'Mythos cards increase in difficulty with each stage. No hard rumors.' },
+  { name: 'Staged (Harder)', type: DifficultyType.Staged, description: 'Mythos cards increase in difficulty with each stage. No easy rumors.' },
+  { name: 'Custom', type: DifficultyType.Custom },
 ];
 
 export interface Prelude {
@@ -21,10 +24,15 @@ export interface Prelude {
   notAllowedWith: string,
 }
 
+export interface AncientOne {
+  name: string,
+  deck: number[],
+}
+
 export interface Pack {
   name: string,
   preludes: Prelude[],
-  ancientOnes: { name: string, deck: number[] }[],
+  ancientOnes: AncientOne[],
   cards: string[]
 }
 

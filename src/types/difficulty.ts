@@ -5,12 +5,11 @@ export enum DifficultyType {
   Easy,
   Hard,
   Staged,
-  StagedHarder,
   Custom,
 }
 
 // deck building difficulty (not mythos card difficulty)
-export type Difficulty =
+export type DeckDifficulty =
  | { type: DifficultyType.Random }
  | { type: DifficultyType.NoHard }
  | { type: DifficultyType.NoEasy }

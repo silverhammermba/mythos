@@ -1,4 +1,4 @@
-import { currentStage, deckReducer, DeckActionType } from './deck';
+import { currentStage, deckReducer, DeckActionType, initialDeckState } from './deck';
 import { DifficultyType } from '../../types/difficulty';
 import { Deck } from '../../types/deck';
 import { ids, mockBox } from './choice.test';
@@ -44,6 +44,26 @@ describe('currentStage', () => {
 describe('DeckAction.Build', () => {
   it('basically works', () => {
     const input: Deck = {
+      box: mockBox([[CardColor.Blue, CardDifficulty.Hard]]),
+      difficulty: { type: DifficultyType.Hard },
+      discard: mockBox([[CardColor.Green, CardDifficulty.Easy]]),
+      active: mockBox([[CardColor.Green, CardDifficulty.Easy]]),
+      stages: [mockBox([[CardColor.Green, CardDifficulty.Easy]])],
+      counts: [999],
+    };
+
+    const active: Card[] = [{
+      id: 'foo',
+      color: CardColor.Green,
+      difficulty: CardDifficulty.Hard,
+      eldritch: 0,
+      clues: 0,
+      ongoing: false,
+    }];
+
+    const built = deckReducer(input, {
+      type: DeckActionType.Build,
+      active,
       box: mockBox([
         [CardColor.Green, CardDifficulty.Easy],
         [CardColor.Yellow, CardDifficulty.Easy],
@@ -52,7 +72,40 @@ describe('DeckAction.Build', () => {
         [CardColor.Blue, CardDifficulty.Hard],
       ]),
       difficulty: { type: DifficultyType.Random },
-      discard: mockBox([[CardColor.Blue, CardDifficulty.Hard]]),
+      counts,
+      startingRumor: false,
+    });
+    expect(ids(built.box)).toEqual([]);
+    expect(built.difficulty.type).toEqual(DifficultyType.Random);
+    expect(ids(built.discard)).toEqual([]);
+    expect(built.active).toEqual(active);
+    expect(built.stages.length).toEqual(3);
+    expect(built.stages.map((s) => ids(s).sort())).toEqual([['0', '2'], ['1', '3'], ['4']]);
+    expect(built.counts).toEqual(counts);
+  });
+
+  it('dedups active cards', () => {
+    const built = deckReducer(initialDeckState, {
+      type: DeckActionType.Build,
+      active: mockBox([[CardColor.Green, CardDifficulty.Hard]]),
+      box: mockBox([
+        [CardColor.Green, CardDifficulty.Easy],
+        [CardColor.Yellow, CardDifficulty.Easy],
+        [CardColor.Green, CardDifficulty.Easy],
+        [CardColor.Blue, CardDifficulty.Normal],
+        [CardColor.Blue, CardDifficulty.Hard],
+      ]),
+      difficulty: { type: DifficultyType.Random },
+      counts,
+      startingRumor: false,
+    });
+    // 0 is gone because the active card has the same ID
+    expect(built.stages.map((s) => ids(s).sort())).toEqual([['2'], ['1', '3'], ['4']]);
+  });
+
+  it('adds starting rumors', () => {
+    const built = deckReducer(initialDeckState, {
+      type: DeckActionType.Build,
       active: [{
         id: 'foo',
         color: CardColor.Green,
@@ -61,43 +114,6 @@ describe('DeckAction.Build', () => {
         clues: 0,
         ongoing: false,
       }],
-      stages: [mockBox([[CardColor.Green, CardDifficulty.Easy]])],
-      counts,
-    };
-
-    const built = deckReducer(input, { type: DeckActionType.Build, startingRumor: false });
-    expect(ids(built.box)).toEqual([]);
-    expect(built.difficulty.type).toEqual(DifficultyType.Random);
-    expect(ids(built.discard)).toEqual([]);
-    expect(built.active).toEqual(input.active);
-    expect(built.stages.length).toEqual(3);
-    expect(built.stages.map((s) => ids(s).sort())).toEqual([['0', '2'], ['1', '3'], ['4']]);
-    expect(built.counts).toEqual(counts);
-  });
-
-  it('dedups active cards', () => {
-    const input: Deck = {
-      box: mockBox([
-        [CardColor.Green, CardDifficulty.Easy],
-        [CardColor.Yellow, CardDifficulty.Easy],
-        [CardColor.Green, CardDifficulty.Easy],
-        [CardColor.Blue, CardDifficulty.Normal],
-        [CardColor.Blue, CardDifficulty.Hard],
-      ]),
-      difficulty: { type: DifficultyType.Random },
-      discard: [],
-      active: mockBox([[CardColor.Green, CardDifficulty.Hard]]),
-      stages: [],
-      counts,
-    };
-
-    const built = deckReducer(input, { type: DeckActionType.Build, startingRumor: false });
-    // 0 is gone because the active card has the same ID
-    expect(built.stages.map((s) => ids(s).sort())).toEqual([['2'], ['1', '3'], ['4']]);
-  });
-
-  it('adds starting rumors', () => {
-    const input: Deck = {
       box: mockBox([
         [CardColor.Green, CardDifficulty.Easy],
         [CardColor.Yellow, CardDifficulty.Easy],
@@ -106,20 +122,9 @@ describe('DeckAction.Build', () => {
         [CardColor.Blue, CardDifficulty.Normal],
       ]),
       difficulty: { type: DifficultyType.Staged, harderRumors: true },
-      discard: [],
-      active: [{
-        id: 'foo',
-        color: CardColor.Green,
-        difficulty: CardDifficulty.Hard,
-        eldritch: 0,
-        clues: 0,
-        ongoing: false,
-      }],
-      stages: [],
       counts,
-    };
-
-    const built = deckReducer(input, { type: DeckActionType.Build, startingRumor: true });
+      startingRumor: true,
+    });
     // should skip rumor id 3 since it is wrong difficulty
     expect(ids(built.active)).toEqual(['foo', '4']);
     // 4 is gone because it's active
@@ -127,7 +132,9 @@ describe('DeckAction.Build', () => {
   });
 
   it('can build a deck with weird counts', () => {
-    const input: Deck = {
+    const built = deckReducer(initialDeckState, {
+      type: DeckActionType.Build,
+      active: [],
       box: mockBox([
         [CardColor.Green, CardDifficulty.Easy],
         [CardColor.Yellow, CardDifficulty.Easy],
@@ -136,13 +143,9 @@ describe('DeckAction.Build', () => {
         [CardColor.Blue, CardDifficulty.Normal],
       ]),
       difficulty: { type: DifficultyType.Random },
-      discard: [],
-      active: [],
-      stages: [],
       counts: [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4],
-    };
-
-    const built = deckReducer(input, { type: DeckActionType.Build, startingRumor: false });
+      startingRumor: false,
+    });
     expect(built.stages.map((s) => ids(s).sort())).toEqual([['0'], ['2'], ['3'], ['1']]);
   });
 });

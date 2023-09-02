@@ -1,5 +1,6 @@
-import { Deck } from '../../types/deck';
 import { CardColor, Card } from '../../types/card';
+import { Deck } from '../../types/deck';
+import { DeckDifficulty, DifficultyType } from '../../types/difficulty';
 import { remove, shuffle } from './array';
 import { choose } from './choice';
 
@@ -56,8 +57,24 @@ export enum DeckActionType {
   EvilOfOld,
 }
 
+export const initialDeckState: Deck = {
+  discard: [],
+  active: [],
+  stages: [],
+  box: [],
+  difficulty: { type: DifficultyType.Random },
+  counts: [],
+};
+
 export type DeckAction =
-  | { type: DeckActionType.Build, startingRumor: boolean }
+  | {
+    type: DeckActionType.Build,
+    active: Card[],
+    box: Card[],
+    difficulty: DeckDifficulty,
+    counts: number[],
+    startingRumor: boolean
+  }
   | { type: DeckActionType.ShuffleDeck }
   | { type: DeckActionType.DiscardActive }
   | { type: DeckActionType.Draw }
@@ -72,49 +89,60 @@ export type DeckAction =
 export const deckReducer = (state: Deck, action: DeckAction): Deck => {
   switch (action.type) {
     case DeckActionType.Build: {
-      const box = [...state.box];
+      const newState: Deck = {
+        discard: [],
+        active: action.active,
+        stages: [],
+        box: action.box,
+        difficulty: action.difficulty,
+        counts: action.counts,
+      };
 
       // ensure that active cards are not in the box (never should have duplicates)
-      state.active.forEach((activeCard) => {
-        remove(box, 1, (card: Card) => card.id === activeCard.id);
+      newState.active.forEach((activeCard) => {
+        remove(newState.box, 1, (card: Card) => card.id === activeCard.id);
       });
 
-      const active = [
-        ...state.active,
-        ...choose(state.difficulty, box, action.startingRumor ? 1 : 0, CardColor.Blue, 0),
+      newState.active = [
+        ...newState.active,
+        ...choose(
+          newState.difficulty,
+          newState.box,
+          action.startingRumor ? 1 : 0,
+          CardColor.Blue,
+          0,
+        ),
       ];
 
       const numStages = 3;
       const colors = [CardColor.Green, CardColor.Yellow, CardColor.Blue];
 
-      const stages: Card[][] = [];
-
-      if (state.counts.length !== numStages * colors.length) {
-        // console.error(`wrong number of ancient one deck stage counts: ${state.counts.length}`);
+      if (newState.counts.length !== numStages * colors.length) {
+        // console.error(`wrong number of deck stage counts: ${newState.counts.length}`);
       }
 
-      for (let s = 0; s < state.counts.length; s += colors.length) {
+      for (let s = 0; s < newState.counts.length; s += colors.length) {
         const stage: Card[] = [];
 
-        for (let i = 0; i < colors.length && s + i < state.counts.length; i += 1) {
+        for (let i = 0; i < colors.length && s + i < newState.counts.length; i += 1) {
           const color = colors[i];
-          const count = state.counts[s + i];
+          const count = newState.counts[s + i];
 
-          const drawn = choose(state.difficulty, box, count, color, stages.length);
+          const drawn = choose(
+            newState.difficulty,
+            newState.box,
+            count,
+            color,
+            newState.stages.length,
+          );
 
           stage.push(...drawn);
         }
 
-        stages.push(shuffle(stage));
+        newState.stages.push(shuffle(stage));
       }
 
-      return {
-        ...state,
-        discard: [],
-        active,
-        stages,
-        box,
-      };
+      return newState;
     }
     case DeckActionType.ShuffleDeck: {
       const deck = shuffle(Array.prototype.concat.apply([], state.stages) as Card[]);
