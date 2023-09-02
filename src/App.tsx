@@ -16,16 +16,11 @@ function App() {
     deckReducer,
     initialDeckState,
     (initialState) => {
-      try {
-        const storedDeck = localStorage.getItem(storageKey);
-        if (storedDeck) {
-          return JSON.parse(storedDeck);
-        }
-        return initialState;
-      } catch (error) {
-        console.error('Error parsing deck', error);
-        return initialState;
+      const storedDeck = localStorage.getItem(storageKey);
+      if (storedDeck) {
+        return JSON.parse(storedDeck);
       }
+      return initialState;
     },
   );
 

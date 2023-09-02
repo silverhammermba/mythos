@@ -1,6 +1,11 @@
 import { Dispatch, useState } from 'react';
 import { DeckAction, DeckActionType } from './reducers/deck';
-import { Difficulty, difficulties, packs } from '../content';
+import {
+  Difficulty,
+  Prelude,
+  difficulties,
+  packs,
+} from '../content';
 import { Deck } from '../types/deck';
 import AllExpansionSelect from './AllExpansionSelect';
 import AncientOneSelect from './AncientOneSelect';
@@ -10,6 +15,8 @@ import PreludeSelect from './PreludeSelect';
 import CustomDifficulty from './CustomDifficulty';
 import StartingRumor from './StartingRumor';
 import { DeckDifficulty, DifficultyType } from '../types/difficulty';
+import { Card, buildCard } from '../types/card';
+import { remove } from './reducers/array';
 
 export function buildDifficulty(
   difficulty: Difficulty,
@@ -36,8 +43,7 @@ export function buildDifficulty(
         hard: customDifficulty[2],
       };
     default:
-      console.error(`unhandled difficulty type ${difficulty.type}`);
-      return { type: DifficultyType.Random };
+      throw new Error(`unhandled difficulty type ${difficulty.type}`);
   }
 }
 
@@ -56,7 +62,17 @@ export function buildCounts(
       }
     }
   }
-  return packs[0].ancientOnes[0].deck;
+  throw new Error(`unknown ancient one ${ancientOneName}`);
+}
+
+export function getPrelude(name: String): Prelude | undefined {
+  for (let i = 0; i < packs.length; i += 1) {
+    for (let j = 0; j < packs[i].preludes.length; j += 1) {
+      const prelude = packs[i].preludes[j];
+      if (prelude.name === name) return prelude;
+    }
+  }
+  return undefined;
 }
 
 interface SetupProp {
@@ -94,10 +110,25 @@ function Setup({
   const startGame: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
+    const box = packs
+      .filter((pack, index) => enabledPacks[index])
+      .flatMap((pack) => pack.cards)
+      .map((code) => buildCard(code));
+
+    const active: Card[] = [];
+
+    const pre = getPrelude(prelude);
+    if (pre) {
+      const card = remove(box, 1, (c) => c.id === pre.card)[0];
+      if (ancientOne !== pre.notAllowedWith) {
+        active.push({ ...card, eldritch: pre.tokens });
+      }
+    }
+
     dispatch({
       type: DeckActionType.Build,
-      active: [], // TODO: get prelude card,
-      box: [], // TODO: load cards
+      active,
+      box,
       difficulty: buildDifficulty(difficulty ?? difficulties[0], customDifficulty),
       counts: buildCounts(ancientOne, customDeckCount),
       startingRumor,
