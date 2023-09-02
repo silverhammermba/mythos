@@ -417,3 +417,11 @@ describe('DeckAction.PactWithEibon', () => {
     expect(discardAndDeck.map((c) => c.id).sort()).toEqual(['0', '1', 'd', 'y', 'z']);
   });
 });
+
+describe('DeckAction.ArbiterOfFate', () => {
+  // skipping tests because it's trivial
+});
+
+describe('DeckAction.EvilOfOld', () => {
+  // skipping tests because it's trivial
+});
