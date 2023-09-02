@@ -15,7 +15,7 @@ function Play({
   return (
     <div className="play-component">
       <p>
-        {`Difficulty ${deck.difficulty}`}
+        {`Deck ${JSON.stringify(deck)}`}
       </p>
     </div>
   );

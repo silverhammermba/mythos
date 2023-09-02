@@ -1,4 +1,5 @@
 import { Dispatch, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DeckAction, DeckActionType } from './reducers/deck';
 import {
   Difficulty,
@@ -85,6 +86,8 @@ function Setup({
   deck,
   dispatch,
 }: SetupProp) {
+  const navigate = useNavigate();
+
   const [enabledPacks, setEnabledPacks] = useState(
     // base pack is selected by default
     Array.from({ length: packs.length }, (_, index) => index === 0),
@@ -133,6 +136,8 @@ function Setup({
       counts: buildCounts(ancientOne, customDeckCount),
       startingRumor,
     });
+
+    navigate('/play');
   };
 
   return (
